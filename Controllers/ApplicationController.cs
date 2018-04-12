@@ -33,5 +33,14 @@ namespace DRM.Controllers
 
             return Ok(applicationVMs);
         }
+
+        public async Task<IActionResult> Get(int id)
+        {
+            var application = await _applicationManager.GetApplicationByID(id);
+
+            var applicationVM = Mapper.Map<ApplicationViewModel>(application);
+
+            return Ok(applicationVM);
+        }
     }
 }

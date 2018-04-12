@@ -10,7 +10,7 @@ Vue.use(Vuetify);
 
 const routes = [
     { path: '/', component: require('./components/dashboard/dashboard.vue.html') },
-    { path: '/counter', component: require('./components/counter/counter.vue.html') },
+    { path: '/application/:id', component: require('./components/application/application.vue.html'), props: true },
     { path: '/fetchdata', component: require('./components/fetchdata/fetchdata.vue.html') }
 ];
 

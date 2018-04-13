@@ -1,0 +1,31 @@
+<template>
+    <v-layout row justify-center>
+        <v-dialog persistent max-width="500px" v-model="value">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Create a new application</span>
+                </v-card-title>
+                <v-card-text>
+                    <v-container grid-list-md>
+                        <v-layout wrap>
+                            <v-flex xs12>
+                                <v-text-field label="Name" v-model="Name" required></v-text-field>
+                            </v-flex>
+                            <v-flex xs12>
+                                <v-text-field multi-line label="Description" v-model="Description" required></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                    </v-container>
+                    <small>*indicates required field</small>
+                </v-card-text>
+                <v-card-actions>
+                    <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat v-on:click="hideCreateApplicationDialog()">Close</v-btn>
+                    <v-btn color="blue darken-1" flat v-on:click="">Create</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+    </v-layout>
+</template>
+
+<script src="./newApplication.ts"></script>

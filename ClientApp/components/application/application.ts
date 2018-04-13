@@ -13,23 +13,30 @@ interface Application {
 
 @Component
 export default class ApplicationComponent extends Vue {
-    //Application: Application = "";
+    $route: any;
+    $http: any;
+    Application: Application = {} as any;
+    showApplicationDialog: boolean = false;
 
     GetApplication() {
-        fetch('Application/Get/${this.applicationID}')
-            .then(response => response.json() as Promise<Application>)
-            .then(data => {
-                alert(data);
-               console.log(data);
-            });
-    };
+        this.$http.get('Application/Get', {
+            params: {
+                id: this.applicationID
+            }
+        }).then((response: any) => {
+            console.log(response);
+            this.Application = response.data;
+        }).catch(function (error: any) {
+            alert(error);
+        });
+    }
 
     get applicationID() {
         return this.$route.params.id;
     }
 
 
-    mounted() {
+    async mounted() {
         this.GetApplication();
     }
 }

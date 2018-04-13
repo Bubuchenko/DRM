@@ -4,11 +4,11 @@
     "experimentalDecorators": true,
     "module": "es2015",
     "moduleResolution": "node",
-    "target": "es5",
-    "sourceMap": true,
     "skipDefaultLibCheck": true,
+    "sourceMap": true,
     "strict": true,
-    "types": ["webpack-env"]
+    "target": "es5",
+    "types": [ "webpack-env" ]
   },
   "exclude": [
       "bin",

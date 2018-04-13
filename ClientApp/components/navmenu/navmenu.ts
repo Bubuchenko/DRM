@@ -3,5 +3,6 @@ import { Component } from 'vue-property-decorator';
 
 @Component
 export default class MenuComponent extends Vue {
-    drawer: boolean =  false;
+    drawer: boolean = false;
+
 }

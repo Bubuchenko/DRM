@@ -9,10 +9,15 @@ interface Application {
     Tasks: any;
 }
 
-
-@Component
+@Component({
+    components: {
+        NewApplicationComponent: require('../newapplication/newapplication.vue.html')
+    }
+})
 export default class DashboardComponent extends Vue {
     Applications: Application[] = [];
+    ShowCreateApplicationDialog: boolean = false;
+
 
     GetApplications() {
         fetch('Application/All')

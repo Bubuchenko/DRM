@@ -1,21 +1,43 @@
 <template>
     <v-layout wrap>
-        <v-flex md6 lg3 xs12 v-for="Application in Applications">
-            <v-card class="appcard" hover raised ripple tile height="100%" wrap :to="'/application/' + Application.id">
+        <v-flex md6 lg3 xs12 v-for="Application in Applications" :key="Application.id">
+            <v-fade-transition mode="out-in">
+                <v-card class="appcard" height="100%" raised hover>
+                    <v-card-title primary-title>
+                        <div class="display-1">
+                            {{ Application.name }}
+                            <v-divider class="mt-2"></v-divider>
+                        </div>
+                    </v-card-title>
+                    <v-card-text class="appcard-text">
+                        <div> {{ Application.description }} </div>
+                    </v-card-text>
+                    <v-card-actions>
+                        <v-btn block color="info" :to="'/application/' + Application.id">View Details</v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-fade-transition>
+        </v-flex>
+        <v-flex md4 lg2 xs12>
+            <v-card class="appcard" height="100%" raised hover>
                 <v-card-title primary-title>
                     <div class="display-1">
-                        {{ Application.name }}
+                        <v-icon>library_add</v-icon>
+                        New
                         <v-divider class="mt-2"></v-divider>
                     </div>
                 </v-card-title>
                 <v-card-text class="appcard-text">
-                    <div> {{ Application.description }} </div>
+                    <div> This action allows you to register a new application for managing it's data retention cycles.  </div>
                 </v-card-text>
                 <v-card-actions>
-                    <v-btn block color="info">View Details</v-btn>
+                    <v-btn block color="info" v-on:click="ShowCreateApplicationDialog = true">Get started</v-btn>
                 </v-card-actions>
             </v-card>
         </v-flex>
+
+        <new-application-component v-model="ShowCreateApplicationDialog" />
+
     </v-layout>
 </template>
 <script src="./dashboard.ts"></script>f
@@ -23,13 +45,13 @@
 <style>
     .display-1 {
         width: 100%;
-        color: #2196f3;
         font-weight: bold;
     }
 
     .appcard {
         display: flex;
         flex-direction: column;
+        cursor: default;
     }
 
     .appcard-text {

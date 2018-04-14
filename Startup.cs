@@ -37,6 +37,7 @@ namespace DRM
                 cfg.AddProfile<AutoMapperProfile>();
             });
 
+
             services.AddScoped<IApplicationManager, ApplicationManager>();
         }
 

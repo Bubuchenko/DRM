@@ -26,7 +26,7 @@ export default class ApplicationComponent extends Vue {
         }).then((response: any) => {
             console.log(response);
             this.Application = response.data;
-        }).catch(function (error: any) {
+        }).catch((error: any) => {
             alert(error);
         });
     }

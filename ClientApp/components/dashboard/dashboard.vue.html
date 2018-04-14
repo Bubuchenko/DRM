@@ -36,7 +36,7 @@
             </v-card>
         </v-flex>
 
-        <new-application-component v-model="ShowCreateApplicationDialog" />
+        <new-application-component v-model="ShowCreateApplicationDialog" v-on:created="GetApplications()" />
 
     </v-layout>
 </template>

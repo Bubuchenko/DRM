@@ -1,6 +1,6 @@
 <template>
-    <v-app id="inspire" dark>
-        <menu-component />
+    <v-app id="inspire" :dark="darkTheme">
+        <menu-component v-model="darkTheme"/>
         <v-content>
             <v-container fluid grid-list-md>
                 <v-layout row wrap>

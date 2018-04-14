@@ -9,22 +9,34 @@
                     <v-container grid-list-md>
                         <v-layout wrap>
                             <v-flex xs12>
-                                <v-text-field label="Name" v-model="Name" required></v-text-field>
+                                <v-text-field label="The name of the application" v-model="Name" required></v-text-field>
                             </v-flex>
                             <v-flex xs12>
-                                <v-text-field multi-line label="Description" v-model="Description" required></v-text-field>
+                                <v-text-field multi-line label="Briefly describe the purpose of the application" v-model="Description" required></v-text-field>
                             </v-flex>
                         </v-layout>
                     </v-container>
-                    <small>*indicates required field</small>
+                    <span v-show="errorMessage.length" class="red--text">Error: {{ errorMessage }}</span>
                 </v-card-text>
-                <v-card-actions>
+                <v-card-actions v-show="!IsCreating">
                     <v-spacer></v-spacer>
+                    <v-btn color="blue darken-1" flat v-on:click="createApplication()" ripple>Create</v-btn>
                     <v-btn color="blue darken-1" flat v-on:click="hideCreateApplicationDialog()">Close</v-btn>
-                    <v-btn color="blue darken-1" flat v-on:click="">Create</v-btn>
                 </v-card-actions>
+                <v-fade-transition>
+                    <v-progress-linear :indeterminate="true" v-show="IsCreating"></v-progress-linear>
+                </v-fade-transition>
             </v-card>
         </v-dialog>
+
+        <v-snackbar :timeout="4000"
+                    :top="true"
+                    :color="notificationColor"
+                    v-model="notification">
+            {{ notificationText }}
+            <v-btn flat @click.native="notification = false">Close</v-btn>
+        </v-snackbar>
+
     </v-layout>
 </template>
 

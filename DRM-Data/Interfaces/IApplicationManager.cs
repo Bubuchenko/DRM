@@ -10,5 +10,6 @@ namespace DRM_Data.Interfaces
     {
         Task<List<Application>> GetAllApplications();
         Task<Application> GetApplicationByID(int id);
+        Task<Tuple<bool, string>> CreateApplication(Application application);
     }
 }

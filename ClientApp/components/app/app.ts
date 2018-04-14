@@ -2,7 +2,6 @@ import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
 import MenuComponent from './../navmenu/navmenu';
 
-Vue.prototype.$darkTheme
 
 @Component({
     components: {
@@ -11,4 +10,5 @@ Vue.prototype.$darkTheme
 })
 export default class AppComponent extends Vue {
     drawer: boolean = false;
+    darkTheme: boolean = true;
 }

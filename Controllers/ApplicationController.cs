@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AutoMapper;
 using DRM.ViewModels;
+using DRM_Data;
 using DRM_Data.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,7 @@ namespace DRM.Controllers
 
             List<ApplicationViewModel> applicationVMs = new List<ApplicationViewModel>();
 
-            foreach(var application in applications)
+            foreach (var application in applications)
             {
                 var applicationVM = Mapper.Map<ApplicationViewModel>(application);
 
@@ -32,6 +33,24 @@ namespace DRM.Controllers
             }
 
             return Ok(applicationVMs);
+        }
+
+        public async Task<IActionResult> Create([FromBody] CreateApplicationViewModel application)
+        {
+            if (ModelState.IsValid)
+            {
+                if (String.IsNullOrEmpty(application.Name) || application.Name.Length < 3)
+                    return BadRequest("Invalid application name.");
+
+                var IsCreated = await _applicationManager.CreateApplication(new Application { Name = application.Name, Description = application.Description });
+
+                if (!IsCreated.Item1)
+                    return BadRequest(IsCreated.Item2);
+
+                return Ok();
+            }
+
+            return BadRequest(ModelState);
         }
 
         public async Task<IActionResult> Get(int id)

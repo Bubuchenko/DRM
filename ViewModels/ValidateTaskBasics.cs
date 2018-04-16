@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace DRM.ViewModels
 {
-    public class CreateApplicationViewModel
+    public class ValidateTaskBasicsViewModel
     {
         [Required]
         [StringLength(20)]
-        [RegularExpression(@"^.{3,}$", ErrorMessage = "The name requires a minimum amount of 3 characters")]
+        [RegularExpression(@"^.{3,}$", ErrorMessage = "The name must contain atleast 3 characters")]
         public string Name { get; set; }
         [Required]
         [StringLength(500)]
-        [RegularExpression(@"^.{30,}$", ErrorMessage = "The description requires a minimum amount of 30 characters")]
+        [RegularExpression(@"^.{15,}$", ErrorMessage = "The description must contain atleast 15 characters")]
         public string Description { get; set; }
     }
 }

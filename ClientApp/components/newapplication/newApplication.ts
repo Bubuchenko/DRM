@@ -16,7 +16,6 @@ interface Application {
         MenuComponent: require('../navmenu/navmenu.vue.html')
     }
 })
-
 export default class NewApplicationComponent extends Vue {
     Name: string = "";
     Description: string = "";
@@ -29,6 +28,7 @@ export default class NewApplicationComponent extends Vue {
     notificationText: string = "";
     notificationColor: string = "success";
 
+    showError: boolean = false;
     errorMessage: string = "";
 
     @Prop({ default: false })
@@ -57,6 +57,7 @@ export default class NewApplicationComponent extends Vue {
             this.notificationColor = "success";
         }).catch((error: any) => {
             this.errorMessage = error.response.data;
+            this.showError = true;
             this.IsCreating = false;
             });
 

@@ -9,6 +9,5 @@ import MenuComponent from './../navmenu/navmenu';
     }
 })
 export default class AppComponent extends Vue {
-    drawer: boolean = false;
     darkTheme: boolean = true;
 }

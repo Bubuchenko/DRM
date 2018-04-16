@@ -1,0 +1,46 @@
+<template>
+    <v-layout row justify-center>
+        <v-dialog v-model="value" fullscreen transition="dialog-bottom-transition" :overlay="false">
+            <v-stepper v-model="stepProgress">
+                <v-stepper-header>
+                    <v-stepper-step step="1" :complete="stepProgress > 1">Basic information</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step step="2" :complete="stepProgress > 2">Configuration</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step step="3" :complete="stepProgress > 3">Setup</v-stepper-step>
+                    <v-divider></v-divider>
+                    <v-stepper-step step="4">Validation</v-stepper-step>
+                </v-stepper-header>
+                <v-stepper-items>
+                    <v-stepper-content step="1" v-model="stepProgress">
+                        <task-first-step-component v-on:proceed="stepProgress = 2" v-on:close="close()"/>
+                    </v-stepper-content>
+                    <v-stepper-content step="2" v-model="stepProgress">
+                        <task-second-step-component v-on:close="close()" v-on:previous="stepProgress = 1"/>
+                    </v-stepper-content>
+                </v-stepper-items>
+            </v-stepper>
+        </v-dialog>
+    </v-layout>
+</template>
+
+<script src="./newTask.ts"></script>
+
+
+<style>
+    .stepper {
+        background-color: #212232 !important;
+    }
+
+    .stepper_container {
+        background-color: #323544 !important;
+    }
+
+    .dialog--fullscreen {
+        background-color: #131218 !important;
+    }
+
+    .stepper__step__step > i {
+        height: 17px !important;
+    }
+</style>

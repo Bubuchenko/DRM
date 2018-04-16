@@ -1,0 +1,70 @@
+<template>
+
+    <v-flex md12>
+        <v-card class="stepper_container mb-5" flat>
+            <v-card-title primary-title>
+                <div class="display-1">
+                    Configuration
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+
+            </v-card-title>
+            <v-data-table :headers="headers"
+                          :items="items"
+                          v-model="selected"
+                          item-key="name">
+                <template slot="headerCell" slot-scope="props">
+                    <v-tooltip bottom>
+                        <span slot="activator">
+                            {{ props.header.text }}
+                        </span>
+                        <span>
+                            {{ props.header.text }}
+                        </span>
+                    </v-tooltip>
+                </template>
+                <template slot="items" slot-scope="props">
+                    <td class="text-xs-left">{{ props.item.Server }}</td>
+                    <td class="text-xs-left">{{ props.item.Database}}</td>
+                </template>
+            </v-data-table>
+            <v-card-text>
+                <template v-if="!canProceed">
+                    <v-alert outline transition="slide-y-transition" type="error" dismissible v-model="showError">
+
+                        <ul class="ml-3">
+                            <li v-for="error in errorMessage">
+                                {{ error[0] }}
+                            </li>
+                        </ul>
+                    </v-alert>
+                </template>
+            </v-card-text>
+            <v-fade-transition>
+                <v-progress-linear :indeterminate="true" v-show="inProgress"></v-progress-linear>
+            </v-fade-transition>
+        </v-card>
+        <v-layout row>
+            <v-btn flat v-on:click="previous()">Previous</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click.native="proceed()" :disabled="!canProceed">Continue</v-btn>
+            <v-btn flat v-on:click="close()">Cancel</v-btn>
+        </v-layout>
+    </v-flex>
+</template>
+
+<script src="./secondStep.ts"></script>
+
+<style>
+    .datatable, .datatable__actions {
+        background-color: #323544 !important
+    }
+
+        .datatable tr:hover {
+            background-color: #58586d !important;
+        }
+
+        .datatable > thead > tr {
+            border-bottom: 1px solid #3f51b5;
+        }
+</style>

@@ -39,7 +39,35 @@ namespace DRM_Data
 
                 return Tuple.Create<bool, string>(true, null);
             }
-            catch(Exception ex)
+            catch (Exception ex)
+            {
+                //This is unsafe.. but it's a private application, so let's leave it in for easier debugging.
+                return Tuple.Create<bool, string>(false, ex.Message);
+            }
+        }
+
+        public async Task<Tuple<bool, string>> UpdateApplication(Application application)
+        {
+            try
+            {
+                var app = _context.Applications.FirstOrDefaultAsync(f => f.ID == application.ID).Result;
+
+                if (app == null)
+                    return Tuple.Create<bool, string>(false, "This application does not exist.");
+
+                bool applicationNameExists = _context.Applications.FirstOrDefaultAsync(f => f.ID != application.ID && f.Name == application.Name).Result != null;
+
+                if (applicationNameExists)
+                    return Tuple.Create<bool, string>(false, "An application with this name already exists.");
+
+                app.Name = application.Name;
+                app.Description = application.Description;
+
+                await _context.SaveChangesAsync();
+
+                return Tuple.Create<bool, string>(true, null);
+            }
+            catch (Exception ex)
             {
                 //This is unsafe.. but it's a private application, so let's leave it in for easier debugging.
                 return Tuple.Create<bool, string>(false, ex.Message);
@@ -53,7 +81,7 @@ namespace DRM_Data
 
         public async Task<Application> GetApplicationByID(int id)
         {
-            return await _context.Applications.FindAsync(id);
+            return await _context.Applications.Include(f => f.Tasks).FirstOrDefaultAsync(f => f.ID == id);
         }
     }
 }

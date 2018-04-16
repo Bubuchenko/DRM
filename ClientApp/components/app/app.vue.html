@@ -1,8 +1,8 @@
 <template>
-    <v-app id="inspire" :dark="darkTheme">
-        <menu-component v-model="darkTheme"/>
+    <v-app class="approot" :dark="darkTheme">
+        <menu-component v-on:switch="darkTheme = !darkTheme"/>
         <v-content>
-            <v-container fluid grid-list-md>
+            <v-container fluid grid-list-lg>
                 <v-layout row wrap>
                     <v-slide-y-transition mode="out-in">
                         <router-view></router-view>
@@ -13,3 +13,9 @@
     </v-app>
 </template>
 <script src="./app.ts"></script>
+
+<style>
+    .theme--dark {
+        background-color: #131218 !important;
+    }
+</style>

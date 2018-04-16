@@ -16,7 +16,12 @@
                             </v-flex>
                         </v-layout>
                     </v-container>
-                    <span v-show="errorMessage.length" class="red--text">Error: {{ errorMessage }}</span>
+
+                    <template>
+                        <v-alert outline transition="slide-y-transition" type="error" dismissible v-model="showError">
+                            Error: {{ errorMessage }}
+                        </v-alert>
+                    </template>
                 </v-card-text>
                 <v-card-actions v-show="!IsCreating">
                     <v-spacer></v-spacer>
@@ -41,3 +46,19 @@
 </template>
 
 <script src="./newApplication.ts"></script>
+
+
+<style>
+    .navigation-drawer {
+        background-color: #212232 !important;
+    }
+
+    .toolbar {
+        background-color: #141525 !important;
+    }
+
+    .card {
+        background-color: #212232 !important;
+    }
+
+</style>

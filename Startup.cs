@@ -39,6 +39,7 @@ namespace DRM
 
 
             services.AddScoped<IApplicationManager, ApplicationManager>();
+            services.AddScoped<ITaskManager, TaskManager>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

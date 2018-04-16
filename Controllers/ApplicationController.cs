@@ -50,6 +50,24 @@ namespace DRM.Controllers
                 return Ok();
             }
 
+            return BadRequest(ModelState.Values.Select(f => f.Errors.Select(x => x.ErrorMessage)));
+        }
+
+        public async Task<IActionResult> Update([FromBody] UpdateApplicationViewModel application)
+        {
+            if (ModelState.IsValid)
+            {
+                if (String.IsNullOrEmpty(application.Name) || application.Name.Length < 3)
+                    return BadRequest("Invalid application name.");
+
+                var IsUpdated = await _applicationManager.UpdateApplication(new Application { ID = application.ID, Name = application.Name, Description = application.Description });
+
+                if (!IsUpdated.Item1)
+                    return BadRequest(IsUpdated.Item2);
+
+                return Ok();
+            }
+
             return BadRequest(ModelState);
         }
 

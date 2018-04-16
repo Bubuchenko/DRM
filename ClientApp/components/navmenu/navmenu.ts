@@ -5,4 +5,7 @@ import { Component } from 'vue-property-decorator';
 export default class MenuComponent extends Vue {
     drawer: boolean = false;
 
+    switchTheme() {
+        this.$emit('switch');
+    }
 }

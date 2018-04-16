@@ -6,8 +6,8 @@ import VueRouter from 'vue-router';
 
 @Component({
     components: {
-        TaskFirstStepComponent: require('./firststep/firststep.vue.html'),
-        TaskSecondStepComponent: require('./secondstep/secondstep.vue.html')
+        TaskFirstStepComponent: require('../firststep/firststep.vue.html'),
+        TaskSecondStepComponent: require('../secondstep/secondstep.vue.html')
     }
 })
 export default class NewTaskComponent extends Vue {

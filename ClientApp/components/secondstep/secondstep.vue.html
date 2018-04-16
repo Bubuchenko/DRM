@@ -1,7 +1,7 @@
 <template>
 
     <v-flex md12>
-        <v-card class="stepper_container mb-5" flat>
+        <v-card class="stepper_container mb-5" raised>
             <v-card-title primary-title>
                 <div class="display-1">
                     Configuration
@@ -10,22 +10,19 @@
 
             </v-card-title>
             <v-data-table :headers="headers"
-                          :items="items"
-                          v-model="selected"
+                          :items="Configurations"
                           item-key="name">
-                <template slot="headerCell" slot-scope="props">
-                    <v-tooltip bottom>
-                        <span slot="activator">
-                            {{ props.header.text }}
-                        </span>
-                        <span>
-                            {{ props.header.text }}
-                        </span>
-                    </v-tooltip>
-                </template>
                 <template slot="items" slot-scope="props">
-                    <td class="text-xs-left">{{ props.item.Server }}</td>
-                    <td class="text-xs-left">{{ props.item.Database}}</td>
+                    <td>
+                        <v-radio-group v-model="selected"
+                                       name="rowSelector">
+                            <v-radio :value="props.item.id" />
+                        </v-radio-group>
+                    </td>
+                    <td class="text-xs-left">{{ props.item.server }}</td>
+                    <td class="text-xs-left">{{ props.item.database}}</td>
+                    <td class="text-xs-left">{{ props.item.logon == null ? "Single sign-on" : props.item.logon }}</td>
+                    <td class="text-xs-left">{{ props.item.logon == null ? "None" : "*********" }}</td>
                 </template>
             </v-data-table>
             <v-card-text>
@@ -47,7 +44,7 @@
         <v-layout row>
             <v-btn flat v-on:click="previous()">Previous</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click.native="proceed()" :disabled="!canProceed">Continue</v-btn>
+            <v-btn color="primary" @click.native="proceed()" :disabled="selected == 0">Continue</v-btn>
             <v-btn flat v-on:click="close()">Cancel</v-btn>
         </v-layout>
     </v-flex>
@@ -67,4 +64,7 @@
         .datatable > thead > tr {
             border-bottom: 1px solid #3f51b5;
         }
+    .radio-group {
+        padding-top: 30px !important;
+    }
 </style>

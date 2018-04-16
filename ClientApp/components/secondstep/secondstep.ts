@@ -9,6 +9,7 @@ export default class TaskSecondStepComponent extends Vue {
     $route: any;
     $http: any;
 
+    Configurations: any = [];
 
     @Prop({ default: false })
     value!: boolean;
@@ -18,7 +19,7 @@ export default class TaskSecondStepComponent extends Vue {
     }
 
     proceed() {
-        this.$emit('proceed');
+        this.$emit('proceed', this.selected);
     }
 
     inProgress: boolean = false;
@@ -27,17 +28,28 @@ export default class TaskSecondStepComponent extends Vue {
     Name: string = "";
     Description: string = "";
     canProceed: boolean = false;
+    selected: number = 0;
 
-    headers: any = [{
-        text: 'Server',
-        value: 'Server',
-    }, 
-    { text: 'Database', value: 'Database' }];
+    headers: any = [
+        { text: '', sortable: false },
+        { text: 'Server', value: 'server', }, 
+        { text: 'Database', value: 'database' },
+        { text: 'Logon', value: 'server' },
+        { text: 'Password', value: 'server' }
+    ];
 
-    items: any = [{
-        Server: 'WSRV4646',
-        Database: 'RIFT'
-    }];
+
+    GetApplications() {
+        fetch('Configuration/All')
+            .then(response => response.json())
+            .then(data => {
+                this.Configurations = data;
+            });
+    };
+
+    mounted() {
+        this.GetApplications();
+    }
 
 
 }

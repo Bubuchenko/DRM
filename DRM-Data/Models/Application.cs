@@ -12,6 +12,5 @@ namespace DRM_Data
         public string Description { get; set; }
 
         public virtual List<Task> Tasks { get; set; }
-        public virtual Configuration Configuration { get; set; }
     }
 }

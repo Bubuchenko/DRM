@@ -39,6 +39,8 @@ namespace DRM
 
 
             services.AddScoped<IApplicationManager, ApplicationManager>();
+            services.AddScoped<IDatabaseManager, DatabaseManager>();
+            services.AddScoped<IConfigurationManager, ConfigurationManager>();
             services.AddScoped<ITaskManager, TaskManager>();
         }
 

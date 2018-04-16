@@ -12,9 +12,10 @@ using System;
 namespace DRMData.Migrations
 {
     [DbContext(typeof(DRMContext))]
-    partial class DRMContextModelSnapshot : ModelSnapshot
+    [Migration("20180416130419_updatedconfiguration")]
+    partial class updatedconfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -26,6 +27,8 @@ namespace DRMData.Migrations
                     b.Property<int>("ID")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<int?>("ConfigurationID");
+
                     b.Property<DateTime>("CreationDate");
 
                     b.Property<string>("Description");
@@ -33,6 +36,8 @@ namespace DRMData.Migrations
                     b.Property<string>("Name");
 
                     b.HasKey("ID");
+
+                    b.HasIndex("ConfigurationID");
 
                     b.ToTable("Applications");
                 });
@@ -105,6 +110,13 @@ namespace DRMData.Migrations
                     b.HasIndex("ConfigurationID");
 
                     b.ToTable("Tasks");
+                });
+
+            modelBuilder.Entity("DRM_Data.Application", b =>
+                {
+                    b.HasOne("DRM_Data.Configuration", "Configuration")
+                        .WithMany()
+                        .HasForeignKey("ConfigurationID");
                 });
 
             modelBuilder.Entity("DRM_Data.Task", b =>

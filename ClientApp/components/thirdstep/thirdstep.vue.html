@@ -1,0 +1,229 @@
+<template>
+
+    <v-flex md6>
+        <v-card class="stepper_container mb-5" raised>
+            <v-card-title primary-title>
+                <div class="display-1">
+                    Setup
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+            </v-card-title>
+            <v-card-text>
+                <v-container fluid grid-list-xl>
+                    <v-layout wrap row>
+                        <v-flex md4 xs12>
+                            <div class="subheading" v-if="selectedTable.length > 0">
+                                From table
+                            </div>
+                            <v-select :items="tableNames()"
+                                      v-model="selectedTable"
+                                      label="From table"
+                                      single-line
+                                      autocomplete
+                                      solo
+                                      hide-details></v-select>
+                        </v-flex>
+
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-show="selectedTable.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedColumn.length > 0">
+                                        select column
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="columnNames(selectedTable)"
+                                          v-model="selectedColumn"
+                                          label="select column"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-show="selectedColumn.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedTableAction.length > 0">
+                                        and
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="tableActions"
+                                          v-model="selectedTableAction"
+                                          label="and..."
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-if="selectedTableAction.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedWhereColumn.length > 0">
+                                        if the column
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="columnNames(selectedTable)"
+                                          v-model="selectedWhereColumn"
+                                          label="if"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-if="selectedWhereColumn.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedWhereColumn.length > 0">
+                                        is older than
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="periodSelections"
+                                          v-model="selectedPeriod"
+                                          label="is older than"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                    </v-layout>
+                </v-container>
+
+            </v-card-text>
+            <v-fade-transition>
+                <v-progress-linear :indeterminate="true" v-show=""></v-progress-linear>
+            </v-fade-transition>
+        </v-card>
+
+        <v-layout row>
+            <v-btn flat v-on:click="previous()">Previous</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" @click.native="proceed()">Continue</v-btn>
+            <v-btn flat v-on:click="close()">Cancel</v-btn>
+        </v-layout>
+    </v-flex>
+    <v-flex md6>
+        <v-card class="stepper_container mb-5" raised>
+            <v-card-title primary-title>
+                <div class="display-1">
+                    Setup
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+            </v-card-title>
+            <v-card-text>
+                <v-container fluid grid-list-xl>
+                    <v-layout wrap row>
+                        <v-flex md4 xs12>
+                            <div class="subheading" v-if="selectedTable.length > 0">
+                                From table
+                            </div>
+                            <v-select :items="tableNames()"
+                                      v-model="selectedTable"
+                                      label="From table"
+                                      single-line
+                                      autocomplete
+                                      solo
+                                      hide-details></v-select>
+                        </v-flex>
+
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-show="selectedTable.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedColumn.length > 0">
+                                        select column
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="columnNames(selectedTable)"
+                                          v-model="selectedColumn"
+                                          label="select column"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-show="selectedColumn.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedTableAction.length > 0">
+                                        and
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="tableActions"
+                                          v-model="selectedTableAction"
+                                          label="and..."
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-if="selectedTableAction.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedWhereColumn.length > 0">
+                                        if the column
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="columnNames(selectedTable)"
+                                          v-model="selectedWhereColumn"
+                                          label="if"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                        <v-slide-y-transition mode="out-in">
+                            <v-flex md4 xs12 v-if="selectedWhereColumn.length > 0">
+                                <v-slide-y-transition mode="out-in">
+                                    <div class="subheading" v-if="selectedWhereColumn.length > 0">
+                                        is older than
+                                    </div>
+                                </v-slide-y-transition>
+                                <v-select :items="periodSelections"
+                                          v-model="selectedPeriod"
+                                          label="is older than"
+                                          single-line
+                                          autocomplete
+                                          solo
+                                          hide-details
+                                          :enabled="selectedColumn.length > 0"></v-select>
+                            </v-flex>
+                        </v-slide-y-transition>
+                    </v-layout>
+                </v-container>
+
+            </v-card-text>
+
+        </v-card>
+
+    </v-flex>
+</template>
+
+<script src="./thirdstep.ts"></script>
+
+<style>
+    .input-group--solo {
+        background-color: #58586d !important;
+    }
+
+    .theme--dark .list, .application .theme--dark.list {
+        background-color: unset;
+    }
+
+    .primary--text {
+        color: unset !important;
+    }
+</style>

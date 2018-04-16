@@ -12,9 +12,10 @@ using System;
 namespace DRMData.Migrations
 {
     [DbContext(typeof(DRMContext))]
-    partial class DRMContextModelSnapshot : ModelSnapshot
+    [Migration("20180416131555_160420181")]
+    partial class _160420181
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

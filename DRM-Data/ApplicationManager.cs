@@ -31,7 +31,6 @@ namespace DRM_Data
                 {
                     Name = application.Name,
                     Description = application.Description,
-                    Configuration = new Configuration()
                 };
 
                 await _context.Applications.AddAsync(newApplication);

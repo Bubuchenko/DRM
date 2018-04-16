@@ -6,7 +6,9 @@ namespace DRM_Data
 {
     public class DRMContext : DbContext
     {
-        public DRMContext(DbContextOptions<DRMContext> options) : base(options) { }
+        public DRMContext(DbContextOptions<DRMContext> options) : base(options)
+        {
+        }
 
         public DbSet<Application> Applications { get; set; }
         public DbSet<Configuration> Configurations { get; set; }

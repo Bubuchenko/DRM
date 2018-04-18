@@ -13,14 +13,29 @@ export default class TaskFirstStepComponent extends Vue {
     @Prop({ default: false })
     value!: boolean;
 
+    reset() {
+        this.inProgress = false;
+        this.showError = false;
+        this.errorMessage = "";
+        this.Name = "";
+        this.Description = "";
+        this.canProceed = false;
+    }
+
     proceed() {
-        this.$emit('proceed');
+        this.$emit('proceed', this.basicParameters);
     }
 
     close() {
         this.$emit('close');
     }
 
+    get basicParameters() {
+        return {
+            name: this.Name,
+            description: this.Description
+        };
+    }
 
     inProgress: boolean = false;
     showError: boolean = false;

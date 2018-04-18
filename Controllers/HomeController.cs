@@ -19,5 +19,10 @@ namespace DRM.Controllers
             ViewData["RequestId"] = Activity.Current?.Id ?? HttpContext.TraceIdentifier;
             return View();
         }
+
+        public IActionResult Username()
+        {
+            return Ok(Request.HttpContext.User.Identity.Name.Split('\\')[1]);
+        }
     }
 }

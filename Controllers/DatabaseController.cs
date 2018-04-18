@@ -39,21 +39,36 @@ namespace DRM.Controllers
 
         public async Task<IActionResult> TableData([FromBody] GetTableDataParams parameters)
         {
-            DataTable dt = await _context.GetTableData(parameters);
-
-            List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
-            Dictionary<string, object> row;
-            foreach (DataRow dr in dt.Rows)
+            if (ModelState.IsValid)
             {
-                row = new Dictionary<string, object>();
-                foreach (DataColumn col in dt.Columns)
+                DataTable dt = await _context.GetTableData(parameters);
+
+                List<Dictionary<string, object>> rows = new List<Dictionary<string, object>>();
+                Dictionary<string, object> row;
+                foreach (DataRow dr in dt.Rows)
                 {
-                    row.Add(col.ColumnName, dr[col]);
+                    row = new Dictionary<string, object>();
+                    foreach (DataColumn col in dt.Columns)
+                    {
+                        row.Add(col.ColumnName, dr[col]);
+                    }
+                    rows.Add(row);
                 }
-                rows.Add(row);
+
+                return Ok(rows);
             }
 
-            return Ok(rows);
+            return BadRequest(ModelState);
+        }
+
+        public async Task<IActionResult> WhereColumns([FromBody] GetDateTimeColumnParams parameters)
+        {
+            if (ModelState.IsValid)
+            {
+                return Ok(await _context.GetValidDateTimeFields(parameters));
+            }
+
+            return BadRequest(ModelState);
         }
     }
 }

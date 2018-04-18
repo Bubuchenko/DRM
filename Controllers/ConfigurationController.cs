@@ -27,5 +27,13 @@ namespace DRM.Controllers
 
             return Ok(configurationVMs);
         }
+
+        public async Task<IActionResult> Get(int id)
+        {
+            var configuration = await _context.GetConfigurationByID(id);
+            var configurationVM = Mapper.Map<ConfigurationViewModel>(configuration);
+
+            return Ok(configurationVM);
+        }
     }
 }

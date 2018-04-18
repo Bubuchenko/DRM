@@ -1,0 +1,69 @@
+<template>
+
+    <v-flex md12>
+        <v-card class="stepper_container mb-5" raised>
+            <v-card-title primary-title>
+                <div class="display-1">
+                    Validate setup
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+            </v-card-title>
+            <v-card-text>
+                <v-container grid-list-md>
+                    <div class="headline">Basic information</div>
+                    <v-divider class="mb-2"></v-divider>
+                    <v-layout wrap>
+                        <v-flex xs12>
+                            Name
+                            <v-text-field solo disabled label="Name your task" v-model="value.name" v-on:change="validateFirstStep()" required></v-text-field>
+                        </v-flex>
+                        <v-flex xs12>
+                            Description
+                            <v-text-field solo disabled multi-line label="What does the task do?" v-model="value.description"></v-text-field>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+
+                <v-container grid-list-md>
+                    <div class="headline">User agreement</div>
+                    <v-divider class="mb-2"></v-divider>
+                    <v-layout wrap>
+                        <v-flex xs12>
+                            <v-card raised class="drm-eula">
+                                <v-card-text v-html="actionString"></v-card-text>
+                                <v-card-actions>
+                                </v-card-actions>
+                            </v-card>
+                            <v-flex>
+                                <v-checkbox class="mt-2" label="Click here to indicate that you have read and accept to the user agreement." v-model="userHasAgreedWithTerms"></v-checkbox>
+                            </v-flex>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+            </v-card-text>
+            <v-fade-transition>
+                <v-progress-linear :indeterminate="true" v-show="inProgress"></v-progress-linear>
+            </v-fade-transition>
+        </v-card>
+
+        <v-layout row>
+            <v-btn flat v-on:click="previous()">Previous</v-btn>
+            <v-spacer></v-spacer>
+            <v-btn color="primary" :disabled="!userHasAgreedWithTerms" @click.native="proceed()">Complete</v-btn>
+            <v-btn flat v-on:click="close()">Cancel</v-btn>
+        </v-layout>
+    </v-flex>
+</template>
+
+<script src="./fourthstep.ts"></script>
+
+<style>
+    .drm-eula {
+        font-size: 18px;
+        font-weight: 300;
+    }
+
+    kbd {
+        background: #131218 !important;
+    }
+</style>

@@ -53,10 +53,9 @@
                 <v-container grid-list-lg>
                     <v-layout wrap>
 
-                        <v-flex md3 lg3 xs12 v-for="(Task, index) in Application.tasks" :key="index">
-                            <v-card>
+                        <v-flex md4 lg3 sm4 xs12 v-for="(Task, index) in Application.tasks" :key="index">
                                 <v-fade-transition mode="out-in">
-                                    <v-card class="taskcard" raised>
+                                    <v-card class="taskcard" raised height="100%">
                                         <v-card-title primary-title>
                                             <div class="subheading">
                                                 {{ Task.name }}
@@ -66,12 +65,13 @@
                                         <v-card-text class="appcard-text">
                                             {{ Task.description }}
                                         </v-card-text>
-                                        <v-card-actions>
-                                            <v-btn block ripple  color="info">Edit</v-btn>
-                                        </v-card-actions>
+                                        <v-flex xs12>
+                                            <v-card-actions>
+                                                <v-btn block ripple color="info">Edit</v-btn>
+                                            </v-card-actions>
+                                        </v-flex>
                                     </v-card>
                                 </v-fade-transition>
-                            </v-card>
                         </v-flex>
                     </v-layout>
                     <v-btn color="primary"
@@ -85,7 +85,7 @@
                 </v-container>
             </v-card>
         </v-flex>
-        <new-task-component v-model="ShowCreateTaskDialog" v-on:close="ShowCreateTaskDialog = false" />
+        <task-editor-component :applicationid="Application.id" v-on:created="GetApplication()" v-model="ShowCreateTaskDialog" v-on:close="ShowCreateTaskDialog = false, newApplicationKey = Math.random()" :key="newApplicationKey"/>
     </v-layout>
 </template>
 

@@ -40,5 +40,10 @@ namespace DRM_Data
         {
             return await _context.Configurations.ToListAsync();
         }
+
+        public async Task<Configuration> GetConfigurationByID(int id)
+        {
+            return await _context.Configurations.FindAsync(id);
+        }
     }
 }

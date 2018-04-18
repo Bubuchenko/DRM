@@ -9,6 +9,7 @@ namespace DRM_Data.Models
     public class Condition : Entity
     {
         public ConditionType Type { get; set; }
+        public string Selector { get; set; }
         public string Value { get; set; }
     }
 

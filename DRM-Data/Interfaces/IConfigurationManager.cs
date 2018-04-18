@@ -10,5 +10,6 @@ namespace DRM_Data.Interfaces
     {
         Task<List<Configuration>> GetAllConfigurationsAsync();
         Task<Tuple<bool, string>> CreateConfiguration(Configuration configuration);
+        Task<Configuration> GetConfigurationByID(int id);
     }
 }

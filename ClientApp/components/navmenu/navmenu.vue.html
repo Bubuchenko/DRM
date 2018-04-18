@@ -1,8 +1,8 @@
 <template>
     <div>
         <v-navigation-drawer clipped fixed v-model="drawer" app>
-            <v-list dense>
-                <v-list-tile @click="">
+            <v-list>
+                <v-list-tile :to="'/'">
                     <v-list-tile-action>
                         <v-icon>dashboard</v-icon>
                     </v-list-tile-action>
@@ -24,10 +24,10 @@
             <v-toolbar-side-icon @click.stop="drawer = !drawer"></v-toolbar-side-icon>
             <v-toolbar-title>Data Retention Manager</v-toolbar-title>
             <v-spacer></v-spacer>
+            <img src="https://i.imgur.com/1CjaufA.png" style="height: 64px"/>
         </v-toolbar>
     </div>
 </template>
-
 
 <style src="./navmenu.css"></style>
 <script src="./navmenu.ts"></script>

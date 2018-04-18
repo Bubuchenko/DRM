@@ -1,13 +1,8 @@
 ﻿import Vue from 'vue';
 import { Component } from 'vue-property-decorator';
+import VueRouter from 'vue-router';
 
-interface Application {
-    ID: string;
-    Name: string;
-    Description: string;
-    CreationDate: number;
-    Tasks: any;
-}
+
 
 @Component({
     components: {
@@ -15,18 +10,18 @@ interface Application {
     }
 })
 export default class DashboardComponent extends Vue {
-    Applications: Application[] = [];
+    Applications: any[] = [];
     ShowCreateApplicationDialog: boolean = false;
-
+    $http: any;
 
     GetApplications() {
-        fetch('Application/All')
-            .then(response => response.json() as Promise<Application[]>)
-            .then(data => {
-                this.Applications = data;
-            });
+        this.$http.get('Application/All', {
+        }).then((response: any) => {
+            this.Applications = response.data;
+        }).catch((error: any) => {
+            alert(error);
+        });
     };
-
 
     mounted() {
         this.GetApplications();

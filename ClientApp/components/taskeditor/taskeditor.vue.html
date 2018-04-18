@@ -13,13 +13,16 @@
                 </v-stepper-header>
                 <v-stepper-items>
                     <v-stepper-content step="1" v-model="stepProgress">
-                        <task-first-step-component v-on:proceed="stepProgress = 2" v-on:close="close()" />
+                        <task-first-step-component v-on:proceed="finalizeStep1" v-on:close="close()"/>
                     </v-stepper-content>
                     <v-stepper-content step="2" v-model="stepProgress">
-                        <task-second-step-component v-on:proceed="finalizeStep2" v-on:close="close()" v-on:previous="stepProgress = 1"/>
+                        <task-second-step-component v-on:proceed="finalizeStep2" v-on:close="close()" v-on:previous="stepProgress = 1" />
                     </v-stepper-content>
                     <v-stepper-content step="3" v-model="stepProgress">
-                        <task-third-step-component v-on:proceed="" v-on:close="close()" v-on:previous="stepProgress = 2" />
+                        <task-third-step-component v-on:proceed="finalizeStep3" v-on:close="close()" v-on:previous="stepProgress = 2" :configurationid="taskParameters.configurationID" />
+                    </v-stepper-content>
+                    <v-stepper-content step="4" v-model="stepProgress">
+                        <task-fourth-step-component v-on:proceed="finalizeStep4" v-on:close="close()" v-on:previous="stepProgress = 3" v-model="taskParameters"/>
                     </v-stepper-content>
                 </v-stepper-items>
             </v-stepper>
@@ -27,7 +30,7 @@
     </v-layout>
 </template>
 
-<script src="./newTask.ts"></script>
+<script src="./taskeditor.ts"></script>
 
 
 <style>

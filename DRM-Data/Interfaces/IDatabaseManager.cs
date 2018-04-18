@@ -12,5 +12,6 @@ namespace DRM_Data.Interfaces
         Task<Tuple<bool, List<string>>> GetTableNames(int ConfigurationID);
         Task<DataTable> GetPreviewData();
         Task<DataTable> GetTableData(GetTableDataParams parameters);
+        Task<List<string>> GetValidDateTimeFields(GetDateTimeColumnParams parameters);
     }
 }

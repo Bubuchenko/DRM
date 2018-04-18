@@ -29,8 +29,9 @@ namespace DRM_Data
 
     public enum TaskType
     {
-        Remove, //Removes whole record
-        Hash, //Hashes specific cell
-        Null, //Nulls specific cell
+        REMOVE, //Removes whole record
+        MD5, //Hashes specific cell
+        SHA256, //Hashes specific cell
+        NULL, //Nulls specific cell
     }
 }

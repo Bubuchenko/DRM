@@ -5,7 +5,7 @@ import VueRouter from 'vue-router';
 
 @Component({
     components: {
-        NewTaskComponent: require('../newtask/newTask.vue.html')
+        TaskEditorComponent: require('../taskeditor/taskeditor.vue.html')
     }
 })
 export default class ApplicationComponent extends Vue {
@@ -14,6 +14,8 @@ export default class ApplicationComponent extends Vue {
     Application: any = {} as any;
     showApplicationDialog: boolean = false;
     ShowCreateTaskDialog: boolean = false;
+
+    newApplicationKey: string = "";
 
     Name: string = "";
     Description: string = "";

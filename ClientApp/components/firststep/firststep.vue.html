@@ -12,10 +12,12 @@
                 <v-container grid-list-md>
                     <v-layout wrap>
                         <v-flex xs12>
-                            <v-text-field label="Name your task" v-model="Name" v-on:change="validateFirstStep()" required></v-text-field>
+                            Name
+                            <v-text-field solo label="Name your task" v-model="Name" v-on:change="validateFirstStep()" required></v-text-field>
                         </v-flex>
                         <v-flex xs12>
-                            <v-text-field multi-line label="What does the task do?" v-model="Description" v-on:change="validateFirstStep()" required></v-text-field>
+                            Description
+                            <v-text-field loading solo multi-line label="What does the task do?" v-model="Description" v-on:change="validateFirstStep()" required></v-text-field>
                         </v-flex>
                     </v-layout>
                 </v-container>

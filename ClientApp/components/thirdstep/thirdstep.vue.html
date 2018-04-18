@@ -16,53 +16,52 @@
                                     <div class="subheading" v-if="selectedTable.length > 0">
                                         From table
                                     </div>
-                                    <v-select :loading="inProgress" :items="TableNames" v-model="selectedTable" label="From table" single-line autocomplete :solo="!inProgress"
-                                        hide-details></v-select>
+                                    <v-select :loading="inProgress" :items="TableNames" v-model="selectedTable" label="From table" single-line autocomplete :solo="!inProgress" hide-details></v-select>
                                 </v-flex>
 
-                                <v-slide-y-transition mode="out-in">
-                                    <v-flex md6 xs12 v-if="TableData.length > 0">
-                                        <v-slide-y-transition mode="out-in">
+                                <v-slide-y-reverse-transition mode="out-in">
+                                    <v-flex md6 xs12 v-if="selectedTable.length > 0">
+                                        <v-slide-y-reverse-transition mode="out-in">
                                             <div class="subheading" v-if="selectedColumn.length > 0">
                                                 select column
                                             </div>
-                                        </v-slide-y-transition>
-                                        <v-select :items="columnNames()" v-model="selectedColumn" label="select column" single-line autocomplete solo hide-details></v-select>
+                                        </v-slide-y-reverse-transition>
+                                        <v-select :loading="inProgress" :items="Columns" v-model="selectedColumn" label="select column" single-line autocomplete :solo="!inProgress" hide-details></v-select>
                                     </v-flex>
-                                </v-slide-y-transition>
+                                </v-slide-y-reverse-transition>
 
-                                <v-slide-y-transition mode="out-in">
+                                <v-slide-y-reverse-transition mode="out-in">
                                     <v-flex md12 xs12 v-show="selectedColumn.length > 0">
-                                        <v-slide-y-transition mode="out-in">
+                                        <v-slide-y-reverse-transition mode="out-in">
                                             <div class="subheading" v-if="selectedTableAction.length > 0">
                                                 and
                                             </div>
-                                        </v-slide-y-transition>
-                                        <v-select :items="tableActions" v-model="selectedTableAction" label="and..." single-line autocomplete solo hide-details></v-select>
+                                        </v-slide-y-reverse-transition>
+                                        <v-select :loading="inProgress" :items="tableActions" v-model="selectedTableAction" label="and..." single-line autocomplete :solo="!inProgress" hide-details></v-select>
                                     </v-flex>
-                                </v-slide-y-transition>
-                                <v-slide-y-transition mode="out-in">
+                                </v-slide-y-reverse-transition>
+                                <v-slide-y-reverse-transition mode="out-in">
                                     <v-flex md6 xs12 v-if="selectedTableAction.length > 0">
-                                        <v-slide-y-transition mode="out-in">
+                                        <v-slide-y-reverse-transition mode="out-in">
                                             <div class="subheading" v-if="selectedWhereColumn.length > 0">
                                                 if the column
                                             </div>
-                                        </v-slide-y-transition>
-                                        <v-select :items="columnNames(selectedTable)" v-model="selectedWhereColumn" label="if" single-line autocomplete solo hide-details
-                                            :enabled="selectedColumn.length > 0"></v-select>
+                                        </v-slide-y-reverse-transition>
+                                        <v-select :loading="inProgress" :items="FilterColumns" v-model="selectedWhereColumn" label="if" single-line autocomplete :solo="!inProgress" hide-details
+                                                  :enabled="selectedColumn.length > 0"></v-select>
                                     </v-flex>
-                                </v-slide-y-transition>
-                                <v-slide-y-transition mode="out-in">
+                                </v-slide-y-reverse-transition>
+                                <v-slide-y-reverse-transition mode="out-in">
                                     <v-flex md6 xs12 v-if="selectedWhereColumn.length > 0">
-                                        <v-slide-y-transition mode="out-in">
+                                        <v-slide-y-reverse-transition mode="out-in">
                                             <div class="subheading" v-if="selectedWhereColumn.length > 0">
                                                 is older than
                                             </div>
-                                        </v-slide-y-transition>
-                                        <v-select :items="periodSelections()" v-model="selectedPeriod" label="is older than" single-line autocomplete solo hide-details
-                                            :enabled="selectedColumn.length > 0"></v-select>
+                                        </v-slide-y-reverse-transition>
+                                        <v-select :loading="inProgress" :items="periodSelections()" v-model="selectedPeriod" label="is older than" single-line autocomplete :solo="!inProgress" hide-details
+                                                  :enabled="selectedColumn.length > 0"></v-select>
                                     </v-flex>
-                                </v-slide-y-transition>
+                                </v-slide-y-reverse-transition>
                             </v-layout>
                         </v-container>
 
@@ -74,66 +73,64 @@
 
             </v-flex>
 
-            <v-slide-x-transition mode="out-in">
-                <v-flex md12 v-if="TableData.length > 0">
-                    <v-card class="stepper_container mb-5" raised>
-                        <v-card-title primary-title>
-                            <div class="display-1">
-                                Preview
-                                <v-divider class="mt-2"></v-divider>
-                            </div>
-                        </v-card-title>
-                        <v-card-text>
-                            <!-- Default -->
-                            <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction.length == 0">
-                                <template slot="items" slot-scope="props">
-                                    <td v-for="column in columnNames()">{{ formatCellValue(props.item[column]) }}</td>
-                                </template>
-                            </v-data-table>
+            <v-flex md12 class="preview-window">
+                <v-card class="stepper_container mb-5" raised>
+                    <v-card-title primary-title>
+                        <div class="display-1">
+                            Preview
+                            <v-divider class="mt-2"></v-divider>
+                        </div>
+                    </v-card-title>
+                    <v-card-text>
+                        <!-- Default -->
+                        <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction.length == 0" update:pagination="getTableData(10)">
+                            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                            <template slot="items" slot-scope="props">
+                                <td v-for="column in Columns">{{ formatCellValue(props.item[column]) }}</td>
+                            </template>
+                        </v-data-table>
 
-                            <!-- Clear cell -->
-                            <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'NULL'">
-                                <template slot="items" slot-scope="props">
-                                    <td v-for="column in columnNames()">{{ column == selectedColumn ? "NULL" : formatCellValue(props.item[column]) }}</td>
-                                </template>
-                            </v-data-table>
+                        <!-- Clear cell -->
+                        <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'NULL'">
+                            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                            <template slot="items" slot-scope="props">
+                                <td v-for="column in Columns" :class="{ 'blurOut' : (column != selectedColumn), 'changedValue' : (column == selectedColumn),   }">{{ column == selectedColumn ? "NULL" : formatCellValue(props.item[column]) }}</td>
+                            </template>
+                        </v-data-table>
 
-                            <!-- Remove record -->
-                            <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'REMOVE'">
-                                <template slot="items" slot-scope="props">
-                                    <td v-for="column in columnNames()" style="background-color: rgba(255, 2, 2, 0.204) !important;">
-                                        <strike>{{ formatCellValue(props.item[column]) }}</strike>
-                                    </td>
-                                </template>
-                            </v-data-table>
+                        <!-- Remove record -->
+                        <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'REMOVE'">
+                            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                            <template slot="items" slot-scope="props">
+                                <td v-for="column in Columns" style="background-color: rgba(255, 2, 2, 0.204) !important;">
+                                    <strike>{{ formatCellValue(props.item[column]) }}</strike>
+                                </td>
+                            </template>
+                        </v-data-table>
 
+                        <!-- MD5 cell -->
+                        <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'MD5'">
+                            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                            <template slot="items" slot-scope="props">
+                                <td v-for="column in Columns" :class="{ 'blurOut' : (column != selectedColumn), 'changedValue' : (column == selectedColumn),   }">{{ column == selectedColumn ? MD5(props.item[column]) : formatCellValue(props.item[column]) }}</td>
+                            </template>
+                        </v-data-table>
 
-                            <!-- MD5 cell -->
-                            <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'MD5'">
-                                <template slot="items" slot-scope="props">
-                                        <td v-for="column in columnNames()">{{ column == selectedColumn ? MD5(props.item[column]) : formatCellValue(props.item[column]) }}</td>
-                                </template>
-                            </v-data-table>
-
-                            <!-- SHA256 cell -->
-                            <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'SHA256'">
-                                    <template slot="items" slot-scope="props">
-                                            <td v-for="column in columnNames()">{{ column == selectedColumn ? SHA256(props.item[column]) : formatCellValue(props.item[column]) }}</td>
-                                    </template>
-                                </v-data-table>
-
-
-                        </v-card-text>
-
-                    </v-card>
-
-                </v-flex>
-            </v-slide-x-transition>
+                        <!-- SHA256 cell -->
+                        <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'SHA256'">
+                            <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                            <template slot="items" slot-scope="props">
+                                <td v-for="column in Columns" :class="{ 'blurOut' : (column != selectedColumn), 'changedValue' : (column == selectedColumn),   }">{{ column == selectedColumn ? SHA256(props.item[column]) : formatCellValue(props.item[column]) }}</td>
+                            </template>
+                        </v-data-table>
+                    </v-card-text>
+                </v-card>
+            </v-flex>
         </v-layout>
         <v-layout row>
             <v-btn flat v-on:click="previous()">Previous</v-btn>
             <v-spacer></v-spacer>
-            <v-btn color="primary" @click.native="proceed()">Continue</v-btn>
+            <v-btn color="primary" @click.native="proceed()" :disabled="!setupIsComplete">Continue</v-btn>
             <v-btn flat v-on:click="close()">Cancel</v-btn>
         </v-layout>
     </v-container>
@@ -153,5 +150,20 @@
 
     .primary--text {
         color: unset !important;
+    }
+</style>
+
+<style>
+    .blurOut {
+        opacity: 0.4;
+    }
+
+    .changedValue {
+        color: orange;
+        font-weight: bold !important;
+    }
+
+    .preview-window {
+        transition: all 10s ease !important;
     }
 </style>

@@ -4,10 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Data;
 using System.Text;
 using System.Threading.Tasks;
 using DRM_Data.Models;
+using DRM_Data.ViewModels;
 
 namespace DRM_Data
 {
@@ -20,7 +20,7 @@ namespace DRM_Data
             _context = context;
         }
 
-        public async Task<Tuple<bool, object>> GetTables(int ConfigurationID)
+        public async Task<Tuple<bool, List<string>>> GetTableNames(int ConfigurationID)
         {
             SqlConnection _conn = null;
 
@@ -38,47 +38,63 @@ namespace DRM_Data
                 await _conn.OpenAsync();
 
                 DataTable dt = _conn.GetSchema("Tables");
-                List<Table> tables = new List<Table>();
+                List<string> tableNames = new List<string>();
 
                 foreach (DataRow row in dt.Rows)
                 {
-                    Table t = new Table
-                    {
-                        Name = row[2].ToString(),
-                        Columns = await GetAllColumns(_conn, row[2].ToString())
-                    };
-
-                    tables.Add(t);
+                    tableNames.Add(row[2].ToString());
                 }
 
                 _conn.Close();
-                return await System.Threading.Tasks.Task.FromResult(Tuple.Create(true, (object)tables));
+                return await System.Threading.Tasks.Task.FromResult(Tuple.Create(true, tableNames));
             }
             catch (Exception ex)
             {
                 _conn.Close();
-                return Tuple.Create(false, (object)new List<string> { ex.Message });
+                return Tuple.Create(false, new List<string> { ex.Message });
             }
         }
 
-        private async Task<List<string>> GetAllColumns(SqlConnection _conn, string tableName)
+        public async Task<DataTable> GetTableData(GetTableDataParams parameters)
         {
-            using (SqlCommand command = new SqlCommand($"SELECT TOP 0 * FROM {tableName} WHERE 1 = 2;", _conn))
+            SqlConnection _conn = null;
+            Configuration configuration = await _context.Configurations.FirstOrDefaultAsync(f => f.ID == parameters.ConfigurationID);
+
+            _conn = new SqlConnection(
+                $"server={configuration.Server};" +
+                $"Trusted_Connection=yes;" +
+                $"database={configuration.Database};" +
+                $"connection timeout=30; " +
+                $"integrated security=True");
+
+            await _conn.OpenAsync();
+
+            StringBuilder sqlQuery = new StringBuilder(); 
+            
+            sqlQuery.Append("SELECT");
+            
+            if(parameters.Limit > 0)
+                sqlQuery.Append($" TOP { parameters.Limit }");
+            
+            sqlQuery.Append($" * FROM { parameters.TableName }");
+
+            if (!string.IsN ullOrEmpty(parameters.ActionColumn))
+                sqlQuery.Append($" WHERE { parameters.ActionColumn } < DATEADD(month, -{ parameters.Months }, GETDATE())");
+
+
+            using (SqlCommand command = new SqlCommand(sqlQuery.ToString(), _conn))
             {
-                var reader = await command.ExecuteReaderAsync();
-                await reader.ReadAsync();
-                var tableSchema = reader.GetSchemaTable();
+                DataTable dataTable = new DataTable();
+                SqlDataAdapter da = new SqlDataAdapter(command);
+                da.Fill(dataTable);
 
-                List<string> columns = new List<string>();
-
-                foreach (DataRow row in tableSchema.Rows)
-                {
-                    columns.Add(row["ColumnName"].ToString());
-                }
-
-                reader.Close();
-                return await System.Threading.Tasks.Task.FromResult(columns);
+                return await System.Threading.Tasks.Task.FromResult(dataTable);
             }
+        }
+
+        public Task<DataTable> GetPreviewData()
+        {
+            throw new NotImplementedException();
         }
     }
 }

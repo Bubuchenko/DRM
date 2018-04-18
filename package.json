@@ -28,7 +28,10 @@
     "webpack-hot-middleware": "^2.12.2"
   },
   "dependencies": {
+    "@types/crypto-js": "^3.1.39",
     "axios": "^0.18.0",
+    "crypto-js": "^3.1.9-1",
+    "moment": "^2.22.1",
     "vuex": "^3.0.1"
   }
 }

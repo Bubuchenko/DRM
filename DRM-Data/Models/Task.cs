@@ -11,11 +11,11 @@ namespace DRM_Data
     {
         public string Name { get; set; }
         public string Description { get; set; }
-        public Configuration Configuration { get; set; }
+        public virtual Configuration Configuration { get; set; }
         public string TableName { get; set; }
         public string ColumnName { get; set; }
         public TaskType Type { get; set; }
-        public Condition Condition { get; set; }
+        public virtual Condition Condition { get; set; }
         public virtual Application Application { get; set; }
 
         public string SQLStatement

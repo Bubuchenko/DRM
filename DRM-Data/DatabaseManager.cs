@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 using DRM_Data.Models;
 using DRM_Data.ViewModels;
 using System.Text;
+using DRM_Data.DTO;
+using System.Linq;
 
 namespace DRM_Data
 {
@@ -102,6 +104,66 @@ namespace DRM_Data
             }
         }
 
+        public async Task<ApplicationEvaluationResult> EvaluateApplication(int applicationID)
+        {
+            var application = await _context.Applications.FirstOrDefaultAsync(f => f.ID == applicationID);
+            var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID);
+
+            ApplicationEvaluationResult result = new ApplicationEvaluationResult
+            {
+                Application = application,
+                TaskResultSets = new List<(Task, DataTable)>()
+            };
+
+            foreach (Task task in tasks)
+            {
+                SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(task.Configuration.ID));
+                await _conn.OpenAsync();
+                StringBuilder sqlQuery = new StringBuilder();
+                sqlQuery.Append($"SELECT * FROM { task.TableName }");
+
+                switch (task.Type)
+                {
+                    case TaskType.REMOVE:
+                        sqlQuery.Append($" WHERE { task.Condition.Selector } {GetOperator(task.Condition.Type)} DATEADD(month, -{ task.Condition.Value }, GETDATE())");
+                        break;
+                    case TaskType.NULL:
+                        sqlQuery.Append($" WHERE { task.Condition.Selector } {GetOperator(task.Condition.Type)} DATEADD(month, -{ task.Condition.Value }, GETDATE()) AND { task.ColumnName } <> NULL");
+                        break;
+                    case TaskType.SHA256:
+                        //todo
+                        break;
+                }
+
+                using (SqlCommand command = new SqlCommand(sqlQuery.ToString(), _conn))
+                {
+                    DataTable dataTable = new DataTable();
+                    SqlDataAdapter da = new SqlDataAdapter(command);
+                    da.Fill(dataTable);
+                    result.TaskResultSets.Add((task, dataTable));
+                }
+            }
+
+            return result;
+        }
+
+        private string GetOperator(ConditionType type)
+        {
+            switch (type)
+            {
+                case ConditionType.Equals:
+                    return "=";
+                case ConditionType.GreaterThan:
+                    return ">";
+                case ConditionType.LessThan:
+                    return "<";
+                case ConditionType.NotEquals:
+                    return "<>";
+                default:
+                    return "";
+            }
+        }
+
         private async Task<string> GetSQLConnectionString(int configurationID)
         {
             Configuration configuration = await _context.Configurations.FirstOrDefaultAsync(f => f.ID == configurationID);
@@ -112,11 +174,6 @@ namespace DRM_Data
                 $"database={configuration.Database};" +
                 $"connection timeout=5; " +
                 $"integrated security=True";
-        }
-
-        public Task<DataTable> GetPreviewData()
-        {
-            throw new NotImplementedException();
         }
     }
 }

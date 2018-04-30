@@ -70,5 +70,18 @@ namespace DRM.Controllers
 
             return BadRequest(ModelState);
         }
+
+        /// <summary>
+        /// Evaluates the tasks of an application and returns all the non compliant records. 
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public async Task<IActionResult> ApplicationEvaluationResult(int id)
+        {
+            var result = await _context.EvaluateApplication(id);
+
+            return Ok(result);
+        }
     }
 }

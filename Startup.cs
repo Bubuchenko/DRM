@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 using AutoMapper;
 using DRM.ViewModels;
@@ -12,6 +14,7 @@ using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Swashbuckle.AspNetCore.Swagger;
 
 namespace DRM
 {
@@ -42,6 +45,16 @@ namespace DRM
             services.AddScoped<IDatabaseManager, DatabaseManager>();
             services.AddScoped<IConfigurationManager, ConfigurationManager>();
             services.AddScoped<ITaskManager, TaskManager>();
+
+            services.AddSwaggerGen(c =>
+            {
+                c.SwaggerDoc("v1", new Info { Title = "DRM API", Version = "v1" });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetEntryAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -61,6 +74,16 @@ namespace DRM
             }
 
             app.UseStaticFiles();
+
+            app.UseSwagger(c =>
+            {
+                c.PreSerializeFilters.Add((swagger, httpReq) => swagger.Host = httpReq.Host.Value);
+            });
+
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("v1/swagger.json", "V1 Docs");
+            });
 
             app.UseMvc(routes =>
             {

@@ -10,6 +10,7 @@ using DRM_Data.ViewModels;
 using System.Text;
 using DRM_Data.DTO;
 using System.Linq;
+using DRM_Data.Extensions;
 
 namespace DRM_Data
 {
@@ -106,15 +107,14 @@ namespace DRM_Data
 
         public async Task<ApplicationEvaluationResult> EvaluateApplication(int applicationID)
         {
-            await _context.Applications.LoadAsync();
             var application = await _context.Applications.Include(f => f.Tasks).FirstOrDefaultAsync(f => f.ID == applicationID);
             var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID).Include(x => x.Condition).Include(x => x.Configuration);
-            
+
 
             ApplicationEvaluationResult result = new ApplicationEvaluationResult
             {
-                Application = application,
-                TaskResultSets = new List<(Task, DataTable)>()
+                ApplicationName = application.Name,
+                NonCompliantRecordSets = new List<ResultSet>()
             };
 
             foreach (Task task in tasks)
@@ -142,11 +142,37 @@ namespace DRM_Data
                     DataTable dataTable = new DataTable();
                     SqlDataAdapter da = new SqlDataAdapter(command);
                     da.Fill(dataTable);
-                    result.TaskResultSets.Add((task, dataTable));
+
+                    if (dataTable.Rows.Count == 0)
+                        continue;
+
+                    result.NonCompliantRecordSets.Add(new ResultSet()
+                    {
+                        Task = task,
+                        Records = dataTable.ToRows()
+                    });
                 }
             }
 
             return result;
+        }
+
+        public async Task<List<ApplicationEvaluationResult>> EvaluateApplications()
+        {
+            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
+
+            var results = new List<ApplicationEvaluationResult>();
+
+            foreach(int applicationID in applications)
+            {
+                var result = await EvaluateApplication(applicationID);
+                if (result.NonCompliantRecordSets.Count == 0)
+                    continue;
+
+                results.Add(await EvaluateApplication(applicationID));
+            }
+
+            return results;
         }
 
         private string GetOperator(ConditionType type)

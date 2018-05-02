@@ -7,9 +7,14 @@ namespace DRM_Data.DTO
 {
     public class ApplicationEvaluationResult
     {
-        public Application Application {get; set;}
+        public string ApplicationName { get; set; }
+        public List<ResultSet> NonCompliantRecordSets { get; set; }
 
-        public List<(Task, DataTable)> TaskResultSets { get; set; }
+    }
 
+    public class ResultSet
+    {
+        public Task Task { get; set; }
+        public List<Dictionary<string, object>> Records {get; set; }
     }
 }

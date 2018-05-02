@@ -4,29 +4,47 @@
             <v-card class="appcard" raised hover xl12>
                 <v-card-title primary-title>
                     <div class="display-1">
-                        Deletion Queue
+                        Queue
                         <v-divider class="mt-2"></v-divider>
                     </div>
                 </v-card-title>
                 <v-card-text>
                     <div>
-                        <v-tabs v-model="active" dark slider-color="yellow">
-                            <v-tab v-for="n in 3"
-                                   :key="n"
-                                   ripple>
-                                VOCUS {{ n }}
+                        <v-tabs dark slider-color="yellow">
+                            <v-tab v-for="evaluation in EvaluationResults"
+                                   :key="evaluation.applicationName" ripple show-arrows>
+                                {{ evaluation.applicationName }} (n)
                             </v-tab>
-                            <v-tab-item v-for="n in 3"
-                                        :key="n">
+                            <v-tab-item v-for="evaluation in EvaluationResults"
+                                        :key="evaluation.applicationName">
                                 <v-card flat>
-                                    <v-card-text>patat lol</v-card-text>
+                                    <v-card-text class="table-container">
+                                        <v-card>
+                                            <template v-for="set in evaluation.nonCompliantRecordSets">
+                                                <v-subheader class="mt-4" style="background-color:rgba(19, 18, 24, 0.5294117647058824)">
+                                                    <div class="subheading">
+                                                       Task - {{ set.task.name }}
+                                                    </div>
+                                                    <v-divider></v-divider>
+                                                    MD5
+                                                </v-subheader>
+                                                <!-- Default -->
+                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name">
+                                                    <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                                                    <template slot="items" slot-scope="props">
+                                                        <td v-for="column in generateColumns(set.records)">{{ formatCellValue(props.item[column]) }}</td>
+                                                        <td>bla</td>
+                                                    </template>
+                                                </v-data-table>
+
+                                            </template>
+                                        </v-card>
+
+                                    </v-card-text>
                                 </v-card>
                             </v-tab-item>
                         </v-tabs>
 
-                        <div class="text-xs-center mt-3">
-                            <v-btn @click.native="next">next tab</v-btn>
-                        </div>
                     </div>
 
                 </v-card-text>
@@ -40,3 +58,9 @@
 </template>
 
 <script src="./queue.ts"></script>
+
+<style>
+    .table-container {
+        padding: 0px;
+    }
+</style>

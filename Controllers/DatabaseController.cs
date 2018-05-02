@@ -76,10 +76,22 @@ namespace DRM.Controllers
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("{id}")]
-        public async Task<IActionResult> ApplicationEvaluationResult(int id)
+        [HttpGet("Database/EvaluateApplication")]
+        public async Task<IActionResult> EvaluateApplication(int id)
         {
             var result = await _context.EvaluateApplication(id);
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Evaluates the tasks of all applications and returns all the non compliant records. 
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Database/EvaluateApplications")]
+        public async Task<IActionResult> EvaluateApplications()
+        {
+            var result = await _context.EvaluateApplications();
 
             return Ok(result);
         }

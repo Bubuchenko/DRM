@@ -32,7 +32,11 @@ namespace DRM
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMvc();
+            services.AddMvc()
+                .AddJsonOptions(o =>
+            {
+                o.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
+            });
 
             services.AddDbContext<DRMContext>(f => f.UseSqlServer(Configuration.GetConnectionString("DRM")));
 
@@ -46,6 +50,8 @@ namespace DRM
             services.AddScoped<IDatabaseManager, DatabaseManager>();
             services.AddScoped<IConfigurationManager, ConfigurationManager>();
             services.AddScoped<ITaskManager, TaskManager>();
+
+
 
             services.AddSwaggerGen(c =>
             {
@@ -84,6 +90,8 @@ namespace DRM
             {
                 app.UseExceptionHandler("/Home/Error");
             }
+
+
 
             app.UseStaticFiles();
 

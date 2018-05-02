@@ -1,6 +1,7 @@
 ﻿import Vue from 'vue';
 import { Component, Prop } from 'vue-property-decorator'
 import VueRouter from 'vue-router';
+import moment from 'moment';
 
 interface Application {
     ID: string;
@@ -16,51 +17,61 @@ interface Application {
         MenuComponent: require('../navmenu/navmenu.vue.html')
     }
 })
-export default class NewApplicationComponent extends Vue {
-    Name: string = "";
-    Description: string = "";
-    IsCreating: boolean = false;
+export default class QueueComponent extends Vue {
     $route: any;
     $http: any;
-
-    //Notification
-    notification: boolean = false;
-    notificationText: string = "";
-    notificationColor: string = "success";
-
-    showError: boolean = false;
-    errorMessage: string = "";
+    EvaluationResults: any = {};
 
     @Prop({ default: false })
     value!: boolean;
 
-    hideCreateApplicationDialog() {
-        this.$parent.$data.ShowCreateApplicationDialog = false;
+
+    formatCellValue(value: any) {
+        if (value.length > 30) value = value.substring(0, 30) + "...";
+
+        if (moment(value).isValid() && !this.isInt(value))
+            value = moment(value).format("DD-MM-YYYY");
+
+        return value;
     }
 
-    clear() {
-        this.Name = "";
-        this.Description = "";
+    isInt(value: any) {
+        var x = parseFloat(value);
+        return !isNaN(value) && (x | 0) === x;
     }
 
-    createApplication() {
-        this.$http.post('Application/Create', {
-            Name: this.Name,
-            Description: this.Description
+    GetApplications() {
+        this.$http.get('Database/EvaluateApplications', {
         }).then((response: any) => {
-            this.hideCreateApplicationDialog();
-            this.$emit('created');
-            this.IsCreating = false;
-
-            this.notificationText = "Application created!"
-            this.notification = true;
-            this.notificationColor = "success";
+            this.EvaluationResults = response.data;
         }).catch((error: any) => {
-            this.errorMessage = error.response.data;
-            this.showError = true;
-            this.IsCreating = false;
-            });
+            alert(error);
+        });
+    };
 
-        this.IsCreating = true;
+    mounted() {
+        this.GetApplications();
+    }
+
+    generateColumns(rows: any) {
+        var columns = (Object as any).getOwnPropertyNames(rows[0]);
+        columns.pop();
+        return columns;
+    }
+
+    generateHeaders(rows: any) {
+        var headers: any = [];
+
+        var columns = (Object as any).getOwnPropertyNames(rows[0]);
+        columns.pop();
+
+        for (var i = 0; i < columns.length; i++) {
+            var header: any = { text: columns[i], value: columns[i] };
+            headers.push(header);
+        }
+
+        headers.push({ text: "Action", value: "Action" });
+
+        return headers;
     }
 }

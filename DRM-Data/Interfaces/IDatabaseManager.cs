@@ -14,5 +14,6 @@ namespace DRM_Data.Interfaces
         Task<DataTable> GetTableData(GetTableDataParams parameters);
         Task<List<string>> GetValidDateTimeFields(GetDateTimeColumnParams parameters);
         Task<ApplicationEvaluationResult> EvaluateApplication(int applicationID);
+        Task<List<ApplicationEvaluationResult>> EvaluateApplications();
     }
 }

@@ -10,4 +10,5 @@ import MenuComponent from './../navmenu/navmenu';
 })
 export default class AppComponent extends Vue {
     darkTheme: boolean = true;
+
 }

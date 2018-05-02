@@ -27,7 +27,9 @@ export default class TaskEditorComponent extends Vue {
         name: "",
         description: "",
         configurationID: 0,
-        setup: {}
+        configuration: {},
+        setup: {},
+        username: ""
     }
 
     
@@ -44,6 +46,9 @@ export default class TaskEditorComponent extends Vue {
 
     finalizeStep3(setupObject: any) {
         this.taskParameters.setup = setupObject;
+        this.getConfiguration();
+        this.getUsername();
+
         this.stepProgress = 4;
     }
 
@@ -76,6 +81,27 @@ export default class TaskEditorComponent extends Vue {
         }).catch((error: any) => {
             this.inProgress = false;
             console.log(error);
+        });
+    }
+
+    getConfiguration() {
+        this.$http.get('Configuration/Get', {
+            params: {
+                id: this.taskParameters.configurationID
+            }
+        }).then((response: any) => {
+            this.taskParameters.configuration = response.data;
+        }).catch((error: any) => {
+            alert(error);
+        });
+    }
+
+    getUsername() {
+        this.$http.get('Home/Username', {
+        }).then((response: any) => {
+            this.taskParameters.username = response.data;
+        }).catch((error: any) => {
+            alert(error);
         });
     }
 }

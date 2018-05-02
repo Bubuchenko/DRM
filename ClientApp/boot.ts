@@ -20,6 +20,7 @@ Vue.prototype.$http = Axios;
 const routes = [
     { path: '/', component: require('./components/dashboard/dashboard.vue.html') },
     { path: '/application/:id', component: require('./components/application/application.vue.html'), props: true },
+    { path: '/queue/', component: require('./components/queue/queue.vue.html')},
 ];
 
 

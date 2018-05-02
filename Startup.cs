@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.SpaServices.Webpack;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Swashbuckle.AspNetCore.Swagger;
@@ -56,6 +57,17 @@ namespace DRM
                 c.IncludeXmlComments(xmlPath);
             });
         }
+
+        //public class DRMContextFactory : IDesignTimeDbContextFactory<DRMContext>
+        //{
+        //    public DRMContext CreateDbContext(string[] args)
+        //    {
+        //        var optionsBuilder = new DbContextOptionsBuilder<DRMContext>();
+        //        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DRM;Trusted_Connection=True;Integrated Security=true;");
+
+        //        return new DRMContext(optionsBuilder.Options);
+        //    }
+        //}
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

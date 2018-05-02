@@ -106,8 +106,10 @@ namespace DRM_Data
 
         public async Task<ApplicationEvaluationResult> EvaluateApplication(int applicationID)
         {
-            var application = await _context.Applications.FirstOrDefaultAsync(f => f.ID == applicationID);
-            var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID);
+            await _context.Applications.LoadAsync();
+            var application = await _context.Applications.Include(f => f.Tasks).FirstOrDefaultAsync(f => f.ID == applicationID);
+            var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID).Include(x => x.Condition).Include(x => x.Configuration);
+            
 
             ApplicationEvaluationResult result = new ApplicationEvaluationResult
             {

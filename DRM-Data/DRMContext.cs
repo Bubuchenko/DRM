@@ -24,5 +24,4 @@ namespace DRM_Data
             //builder.Entity<Application>().HasMany(f => f.Tasks).WithOne().HasForeignKey(f => f.Application).IsRequired().OnDelete(DeleteBehavior.Cascade);
         }
     }
-
 }

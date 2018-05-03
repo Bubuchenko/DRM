@@ -18,7 +18,7 @@ interface Application {
         MenuComponent: require('../navmenu/navmenu.vue.html')
     }
 })
-export default class QueueComponent extends Vue {
+export default class OrchestrationComponent extends Vue {
     $route: any;
     $http: any;
     EvaluationResults: any = {};
@@ -26,6 +26,8 @@ export default class QueueComponent extends Vue {
     @Prop({ default: false })
     value!: boolean;
 
+    ExecutionDialog: boolean = false;
+    userHasAgreed: boolean = false;
 
     formatCellValue(value: any) {
         if (value.length > 30) value = value.substring(0, 30) + "...";

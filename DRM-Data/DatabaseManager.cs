@@ -209,11 +209,42 @@ namespace DRM_Data
                 var result = await GetNonCompliantRecords(applicationID);
 
                 //Only return applications with non compliant records
-                if(result.NonCompliantRecordSets.Count > 0)
+                if (result.NonCompliantRecordSets.Count > 0)
                     results.Add(await GetNonCompliantRecords(applicationID));
             }
 
             return results;
+        }
+
+        public async Task<(bool, string)> TransformRecord(int RecordID)
+        {
+            var record = await _context.Records.Include(f => f.Task).ThenInclude(f => f.Configuration).FirstOrDefaultAsync(f => f.ID == RecordID);
+
+            SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(record.Task.Configuration.ID));
+            await _conn.OpenAsync();
+            StringBuilder sqlQuery = new StringBuilder();
+
+            switch (record.Task.Type)
+            {
+                case TaskType.REMOVE:
+                    sqlQuery.Append($"DELETE FROM { record.Task.TableName } WHERE");
+
+                    foreach (var column in record.Content)
+                    {
+                        sqlQuery.Append($" { column.Key } = { column.Value }");
+                    }
+
+                    break;
+                case TaskType.NULL:
+                    break;
+                case TaskType.SHA256: //Needs more strict like
+                    sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{  }'");
+                    break;
+                case TaskType.MD5: // Idem
+                    break;
+            }
+
+            return (true, "test");
         }
 
         public async void EvaluateApplications()

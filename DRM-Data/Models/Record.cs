@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -14,6 +15,14 @@ namespace DRM_Data.Models
             get
             {
                 return (ExecutionDate != null && ContentJSON == string.Empty);
+            }
+        }
+
+        public Dictionary<string, object> Content
+        {
+            get
+            {
+                return JsonConvert.DeserializeObject<Dictionary<string, object>>(ContentJSON);
             }
         }
     }

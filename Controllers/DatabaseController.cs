@@ -101,5 +101,17 @@ namespace DRM.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Returns all currently stored non compliant records from all tasks, from all applications
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Database/TransformRecord")]
+        public async Task<IActionResult> TransformRecord(int id)
+        {
+            var result = await _context.TransformRecord(id);
+
+            return Ok(result);
+        }
     }
 }

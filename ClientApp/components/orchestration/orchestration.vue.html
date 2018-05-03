@@ -7,7 +7,7 @@
                         Task orchestrator
                         <v-divider class="mt-2"></v-divider>
                     </div>
-                    The following non-compliant records have been identified.
+                    The following non-compliant records have been identified. Inspect these changes carefully before proceeding.
                 </v-card-title>
                 <v-card-text>
                     <div>
@@ -24,7 +24,7 @@
                                             <template v-for="set in evaluation.nonCompliantRecordSets">
                                                 <v-subheader class="mt-4" style="background-color:rgba(19, 18, 24, 0.5294117647058824)">
                                                     <div class="subheading">
-                                                        {{ set.task.name }} ({{ set.records.length }})
+                                                        {{ set.task.name }} ({{ set.records.length }} records)
                                                     </div>
                                                     <v-divider></v-divider>
                                                     {{ set.task.type }}
@@ -66,10 +66,11 @@
                                             </template>
                                         </v-card>
                                     </v-card-text>
+                                    <v-spacer></v-spacer>
                                 </v-card>
+                                <v-btn class="mt-5" color="error" large block v-on:click="ExecutionDialog = true">All of the above changes are okay, proceed</v-btn>
                             </v-tab-item>
                         </v-tabs>
-
                     </div>
 
                 </v-card-text>
@@ -79,10 +80,33 @@
             </v-card>
         </v-flex>
 
+        <v-dialog v-model="ExecutionDialog" max-width="500px" style="background-color: #323544 !important;">
+            <v-card>
+                <v-container grid-list-md>
+                    <div class="display-2 pa-2 red--text" color="red">Are you sure?</div>
+                    <v-divider class="mb-2"></v-divider>
+                    <v-layout wrap>
+                        <v-flex xs12>
+                            <v-card raised class="drm-eula">
+                                <v-card-text class="kbd">
+                                        All the to changes shown to you will be executed by you and are irreversible. Are you sure you want to proceed?
+                                </v-card-text>
+                            </v-card>
+                            <v-flex>
+                                <v-checkbox class="mt-2" label="I accept the presented changes" v-model="userHasAgreed"></v-checkbox>
+                            </v-flex>
+                        </v-flex>
+                    </v-layout>
+                </v-container>
+                <v-card-actions>
+                    <v-btn color="primary" flat>Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
     </v-layout>
 </template>
 
-<script src="./queue.ts"></script>
+<script src="./orchestration.ts"></script>
 
 <style>
     .table-container {
@@ -102,6 +126,20 @@
         color: red;
         font-weight: bold !important;
         opacity: 0.7;
+    }
+
+    .drm-eula {
+        font-size: 18px;
+        font-weight: 300;
+    }
+
+    .kbd {
+        background: #131218 !important;
+    }
+
+    .display-2 {
+        font-weight: bold;
+        background-color: #212232 !important;
     }
 
 </style>

@@ -93,6 +93,9 @@ namespace DRM.Controllers
         {
             var result = Mapper.Map<List<ApplicationEvaluationResultViewModel>>(await _context.EvaluateApplications());
 
+            //Count all the records for quick overview 
+            result.ForEach(f => f.TotalRecords = f.NonCompliantRecordSets.Select(i => i.Records.Count).Sum());
+
             return Ok(result);
         }
     }

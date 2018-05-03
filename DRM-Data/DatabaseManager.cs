@@ -132,8 +132,11 @@ namespace DRM_Data
                     case TaskType.NULL:
                         sqlQuery.Append($" WHERE { task.Condition.Selector } {GetOperator(task.Condition.Type)} DATEADD(month, -{ task.Condition.Value }, GETDATE()) AND { task.ColumnName } <> 'NULL'");
                         break;
-                    case TaskType.SHA256:
-                        //todo
+                    case TaskType.SHA256: //Needs more strict like
+                        sqlQuery.Append($" WHERE { task.Condition.Selector } {GetOperator(task.Condition.Type)} DATEADD(month, -{ task.Condition.Value }, GETDATE()) AND { task.ColumnName } LIKE '%[^0-9]%' AND LEN({ task.ColumnName }) <> 64");
+                        break;
+                    case TaskType.MD5: // Idem
+                        sqlQuery.Append($" WHERE { task.Condition.Selector } {GetOperator(task.Condition.Type)} DATEADD(month, -{ task.Condition.Value }, GETDATE()) AND { task.ColumnName } LIKE '%[^0-9]%' AND LEN({ task.ColumnName }) <> 32");
                         break;
                 }
 

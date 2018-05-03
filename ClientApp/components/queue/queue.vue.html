@@ -4,7 +4,7 @@
             <v-card class="appcard" raised hover xl12>
                 <v-card-title primary-title>
                     <div class="display-1">
-                        Queue
+                        Task orchestrator
                         <v-divider class="mt-2"></v-divider>
                     </div>
                 </v-card-title>
@@ -13,7 +13,7 @@
                         <v-tabs dark slider-color="yellow">
                             <v-tab v-for="evaluation in EvaluationResults"
                                    :key="evaluation.applicationName" ripple show-arrows>
-                                {{ evaluation.applicationName }} (n)
+                                {{ evaluation.applicationName }} ({{ evaluation.totalRecords }})
                             </v-tab>
                             <v-tab-item v-for="evaluation in EvaluationResults"
                                         :key="evaluation.applicationName">
@@ -23,7 +23,7 @@
                                             <template v-for="set in evaluation.nonCompliantRecordSets">
                                                 <v-subheader class="mt-4" style="background-color:rgba(19, 18, 24, 0.5294117647058824)">
                                                     <div class="subheading">
-                                                        Task - {{ set.task.name }} ({{ set.records.length }})
+                                                        {{ set.task.name }} ({{ set.records.length }})
                                                     </div>
                                                     <v-divider></v-divider>
                                                     {{ set.task.type }}
@@ -45,7 +45,21 @@
                                                             <strike>{{ formatCellValue(props.item[column]) }}</strike>
                                                         </td>
                                                     </template>
-                                                    <template slot="footer">
+                                                </v-data-table>
+
+                                                <!-- SHA256 -->
+                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'SHA256'">
+                                                    <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                                                    <template slot="items" slot-scope="props">
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? SHA256(props.item[column]) : formatCellValue(props.item[column]) }}</td>
+                                                    </template>
+                                                </v-data-table>
+
+                                                <!-- MD5 -->
+                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'MD5'">
+                                                    <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                                                    <template slot="items" slot-scope="props">
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? MD5(props.item[column]) : formatCellValue(props.item[column]) }}</td>
                                                     </template>
                                                 </v-data-table>
                                             </template>

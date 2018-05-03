@@ -2,6 +2,7 @@
 import { Component, Prop } from 'vue-property-decorator'
 import VueRouter from 'vue-router';
 import moment from 'moment';
+import CryptoJS from 'crypto-js';
 
 interface Application {
     ID: string;
@@ -71,5 +72,13 @@ export default class QueueComponent extends Vue {
         }
 
         return headers;
+    }
+
+    MD5(value: any) {
+        return CryptoJS.MD5(value).toString();
+    }
+
+    SHA256(value: any): any {
+        return CryptoJS.SHA256(value).toString();
     }
 }

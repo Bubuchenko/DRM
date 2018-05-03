@@ -8,6 +8,7 @@ namespace DRM.ViewModels
     public class ApplicationEvaluationResultViewModel
     {
         public string ApplicationName { get; set; }
+        public int TotalRecords { get; set; }
         public List<ResultSetViewModel> NonCompliantRecordSets { get; set; }
 
     }

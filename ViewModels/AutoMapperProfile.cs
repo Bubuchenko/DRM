@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using DRM_Data;
+using DRM_Data.DTO;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,7 @@ namespace DRM.ViewModels
     {
         public AutoMapperProfile()
         {
+            CreateMap<ApplicationEvaluationResult, ApplicationEvaluationResultViewModel>().ForMember(x => x.TotalRecords, o => o.Ignore());
         }
     }
 }

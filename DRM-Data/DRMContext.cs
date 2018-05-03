@@ -16,6 +16,7 @@ namespace DRM_Data
         public DbSet<Configuration> Configurations { get; set; }
         public DbSet<Task> Tasks { get; set; }
         public DbSet<Condition> Conditions { get; set; }
+        public DbSet<Record> Records { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

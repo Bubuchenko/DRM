@@ -17,6 +17,7 @@ namespace DRM_Data
         public TaskType Type { get; set; }
         public virtual Condition Condition { get; set; }
         public virtual Application Application { get; set; }
+        public virtual List<Record> Records { get; set; }
 
         public string SQLStatement
         {

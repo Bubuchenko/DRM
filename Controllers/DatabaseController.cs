@@ -72,26 +72,29 @@ namespace DRM.Controllers
         }
 
         /// <summary>
-        /// Evaluates the tasks of an application and returns all the non compliant records. 
+        /// Returns all currently stored non compliant records from all tasks, from a specific application
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
-        [HttpGet("Database/EvaluateApplication")]
-        public async Task<IActionResult> EvaluateApplication(int id)
+        [HttpGet("Database/NCRecords")]
+        public async Task<IActionResult> GetApplicationNCRecords(int id)
         {
-            var result = await _context.EvaluateApplication(id);
+            var result = Mapper.Map<ApplicationEvaluationResultViewModel>(await _context.GetNonCompliantRecords(id));
+
+            //Count all the records for quick overview 
+            result.TotalRecords = result.NonCompliantRecordSets.Select(f => f.Records.Count).Sum();
 
             return Ok(result);
         }
 
         /// <summary>
-        /// Evaluates the tasks of all applications and returns all the non compliant records. 
+        /// Returns all currently stored non compliant records from all tasks, from all applications
         /// </summary>
         /// <returns></returns>
-        [HttpGet("Database/EvaluateApplications")]
-        public async Task<IActionResult> EvaluateApplications()
+        [HttpGet("Database/AllNCRecords")]
+        public async Task<IActionResult> GetAllNonCompliantRecords()
         {
-            var result = Mapper.Map<List<ApplicationEvaluationResultViewModel>>(await _context.EvaluateApplications());
+            var result = Mapper.Map<List<ApplicationEvaluationResultViewModel>>(await _context.GetAllNonCompliantRecords());
 
             //Count all the records for quick overview 
             result.ForEach(f => f.TotalRecords = f.NonCompliantRecordSets.Select(i => i.Records.Count).Sum());

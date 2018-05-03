@@ -41,8 +41,8 @@ export default class QueueComponent extends Vue {
         return !isNaN(value) && (x | 0) === x;
     }
 
-    GetApplications() {
-        this.$http.get('Database/EvaluateApplications', {
+    GetRecords() {
+        this.$http.get('Database/AllNCRecords', {
         }).then((response: any) => {
             this.EvaluationResults = response.data;
         }).catch((error: any) => {
@@ -51,7 +51,7 @@ export default class QueueComponent extends Vue {
     };
 
     mounted() {
-        this.GetApplications();
+        this.GetRecords();
     }
 
     generateColumns(rows: any) {

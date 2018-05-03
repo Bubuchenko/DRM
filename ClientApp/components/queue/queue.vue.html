@@ -7,10 +7,11 @@
                         Task orchestrator
                         <v-divider class="mt-2"></v-divider>
                     </div>
+                    The following non-compliant records have been identified.
                 </v-card-title>
                 <v-card-text>
                     <div>
-                        <v-tabs dark slider-color="yellow">
+                        <v-tabs dark slider-color="yellow" tabs v-if="EvaluationResults.length > 0">
                             <v-tab v-for="evaluation in EvaluationResults"
                                    :key="evaluation.applicationName" ripple show-arrows>
                                 {{ evaluation.applicationName }} ({{ evaluation.totalRecords }})

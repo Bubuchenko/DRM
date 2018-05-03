@@ -11,6 +11,7 @@ using System.Text;
 using DRM_Data.DTO;
 using System.Linq;
 using DRM_Data.Extensions;
+using Newtonsoft.Json;
 
 namespace DRM_Data
 {
@@ -105,11 +106,10 @@ namespace DRM_Data
             }
         }
 
-        public async Task<ApplicationEvaluationResult> EvaluateApplication(int applicationID)
+        public async void EvaluateApplication(int applicationID)
         {
             var application = await _context.Applications.Include(f => f.Tasks).FirstOrDefaultAsync(f => f.ID == applicationID);
             var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID).Include(x => x.Condition).Include(x => x.Configuration);
-
 
             ApplicationEvaluationResult result = new ApplicationEvaluationResult
             {
@@ -146,36 +146,84 @@ namespace DRM_Data
                     SqlDataAdapter da = new SqlDataAdapter(command);
                     da.Fill(dataTable);
 
-                    if (dataTable.Rows.Count == 0)
-                        continue;
+                    var records = dataTable.ToRows();
 
-                    result.NonCompliantRecordSets.Add(new ResultSet()
+                    foreach (var record in records)
                     {
-                        Task = task,
-                        Records = dataTable.ToRows()
-                    });
+                        var content = JsonConvert.SerializeObject(record);
+                        var existingRecord = await _context.Records.FirstOrDefaultAsync(f => f.ContentJSON == content && task.ID == task.ID) != null;
+
+                        if (!existingRecord)
+                        {
+                            _context.Records.Add(new Record()
+                            {
+                                Task = task,
+                                ContentJSON = JsonConvert.SerializeObject(record)
+                            });
+                        }
+                    }
                 }
             }
+
+            await _context.SaveChangesAsync();
+        }
+
+        public async Task<ApplicationEvaluationResult> GetNonCompliantRecords(int ApplicationID)
+        {
+            var application = await _context.Applications.FindAsync(ApplicationID);
+            var records = await _context.Records.Include(f => f.Task).Where(f => f.Task.Application.ID == ApplicationID && !f.IsCompliant).ToListAsync();
+
+            ApplicationEvaluationResult result = new ApplicationEvaluationResult()
+            {
+                ApplicationName = application.Name,
+                NonCompliantRecordSets = new List<ResultSet>()
+            };
+
+            foreach (var task in records.Select(f => f.Task).Distinct())
+            {
+                var recordSet = new ResultSet()
+                {
+                    Task = task,
+                    Records = new List<Dictionary<string, object>>()
+                };
+
+                foreach (Record record in records.Where(f => f.Task.ID == task.ID))
+                {
+                    recordSet.Records.Add(JsonConvert.DeserializeObject<Dictionary<string, object>>(record.ContentJSON));
+                }
+
+                result.NonCompliantRecordSets.Add(recordSet);
+            }
+
 
             return result;
         }
 
-        public async Task<List<ApplicationEvaluationResult>> EvaluateApplications()
+        public async Task<List<ApplicationEvaluationResult>> GetAllNonCompliantRecords()
         {
             var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
-
             var results = new List<ApplicationEvaluationResult>();
 
-            foreach(int applicationID in applications)
+            foreach (int applicationID in applications)
             {
-                var result = await EvaluateApplication(applicationID);
-                if (result.NonCompliantRecordSets.Count == 0)
-                    continue;
+                var result = await GetNonCompliantRecords(applicationID);
 
-                results.Add(await EvaluateApplication(applicationID));
+                //Only return applications with non compliant records
+                if(result.NonCompliantRecordSets.Count > 0)
+                    results.Add(await GetNonCompliantRecords(applicationID));
             }
 
             return results;
+        }
+
+        public async void EvaluateApplications()
+        {
+            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
+
+            foreach (int applicationID in applications)
+            {
+                EvaluateApplication(applicationID);
+            }
         }
 
         private string GetOperator(ConditionType type)

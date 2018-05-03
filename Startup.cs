@@ -64,16 +64,16 @@ namespace DRM
             });
         }
 
-        //public class DRMContextFactory : IDesignTimeDbContextFactory<DRMContext>
-        //{
-        //    public DRMContext CreateDbContext(string[] args)
-        //    {
-        //        var optionsBuilder = new DbContextOptionsBuilder<DRMContext>();
-        //        optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DRM;Trusted_Connection=True;Integrated Security=true;");
+        public class DRMContextFactory : IDesignTimeDbContextFactory<DRMContext>
+        {
+            public DRMContext CreateDbContext(string[] args)
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<DRMContext>();
+                optionsBuilder.UseSqlServer("Server=.\\SQLEXPRESS;Database=DRM;Trusted_Connection=True;Integrated Security=true;");
 
-        //        return new DRMContext(optionsBuilder.Options);
-        //    }
-        //}
+                return new DRMContext(optionsBuilder.Options);
+            }
+        }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

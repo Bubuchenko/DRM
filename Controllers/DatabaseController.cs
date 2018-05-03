@@ -91,7 +91,7 @@ namespace DRM.Controllers
         [HttpGet("Database/EvaluateApplications")]
         public async Task<IActionResult> EvaluateApplications()
         {
-            var result = await _context.EvaluateApplications();
+            var result = Mapper.Map<List<ApplicationEvaluationResultViewModel>>(await _context.EvaluateApplications());
 
             return Ok(result);
         }

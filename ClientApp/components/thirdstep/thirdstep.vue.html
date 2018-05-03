@@ -102,7 +102,7 @@
                         <v-data-table :headers="getHeaders()" :items="TableData" item-key="name" :loading="inProgress" v-if="selectedTableAction == 'REMOVE'">
                             <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                             <template slot="items" slot-scope="props">
-                                <td v-for="column in Columns" style="background-color: rgba(255, 2, 2, 0.204) !important;">
+                                <td v-for="column in Columns" class="deletedValue">
                                     <strike>{{ formatCellValue(props.item[column]) }}</strike>
                                 </td>
                             </template>
@@ -161,6 +161,12 @@
     .changedValue {
         color: orange;
         font-weight: bold !important;
+    }
+
+    .deletedValue {
+        color: red;
+        font-weight: bold !important;
+        opacity: 0.7;
     }
 
     .preview-window {

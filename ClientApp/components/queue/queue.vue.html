@@ -23,23 +23,33 @@
                                             <template v-for="set in evaluation.nonCompliantRecordSets">
                                                 <v-subheader class="mt-4" style="background-color:rgba(19, 18, 24, 0.5294117647058824)">
                                                     <div class="subheading">
-                                                       Task - {{ set.task.name }}
+                                                        Task - {{ set.task.name }} ({{ set.records.length }})
                                                     </div>
                                                     <v-divider></v-divider>
-                                                    MD5
+                                                    {{ set.task.type }}
                                                 </v-subheader>
-                                                <!-- Default -->
-                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name">
+
+                                                <!-- NULL -->
+                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'NULL'">
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
-                                                        <td v-for="column in generateColumns(set.records)">{{ formatCellValue(props.item[column]) }}</td>
-                                                        <td>bla</td>
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? "NULL" : formatCellValue(props.item[column]) }}</td>
                                                     </template>
                                                 </v-data-table>
 
+                                                <!-- REMOVE -->
+                                                <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'REMOVE'">
+                                                    <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
+                                                    <template slot="items" slot-scope="props">
+                                                        <td v-for="column in generateColumns(set.records)" class="deletedValue">
+                                                            <strike>{{ formatCellValue(props.item[column]) }}</strike>
+                                                        </td>
+                                                    </template>
+                                                    <template slot="footer">
+                                                    </template>
+                                                </v-data-table>
                                             </template>
                                         </v-card>
-
                                     </v-card-text>
                                 </v-card>
                             </v-tab-item>
@@ -63,4 +73,20 @@
     .table-container {
         padding: 0px;
     }
+
+    .blurOut {
+        opacity: 0.4;
+    }
+
+    .changedValue {
+        color: orange;
+        font-weight: bold !important;
+    }
+
+    .deletedValue {
+        color: red;
+        font-weight: bold !important;
+        opacity: 0.7;
+    }
+
 </style>

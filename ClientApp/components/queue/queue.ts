@@ -70,8 +70,6 @@ export default class QueueComponent extends Vue {
             headers.push(header);
         }
 
-        headers.push({ text: "Action", value: "Action" });
-
         return headers;
     }
 }

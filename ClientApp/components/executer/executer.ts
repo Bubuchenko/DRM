@@ -16,7 +16,7 @@ export default class ExecuterComponent extends Vue {
     @Prop({ default: false })
     value!: boolean;
 
-    stepProgress: number = 2;
+    stepProgress: number = 1;
 
     @Prop({ default: {} })
     params!: any;
@@ -25,8 +25,7 @@ export default class ExecuterComponent extends Vue {
     configurations!: any;
 
     @Watch('value')
-    onvalueChanged(val: any, oldVal: any)
-    {
+    onvalueChanged(val: any, oldVal: any) {
         if (val == true) {
             this.BackupDatabases();
         }
@@ -41,10 +40,16 @@ export default class ExecuterComponent extends Vue {
 
     performTransformations() {
         if (this.params.length > 0) {
+            //For each task in application
             for (var i = 0; i < this.params[this.stepProgress - 2].nonCompliantRecordSets.length; i++) {
-                var record = this.params[this.stepProgress - 2].nonCompliantRecordSets[i];
+                var task = this.params[this.stepProgress - 2].nonCompliantRecordSets[i];
 
-                console.log(record);
+                //For each record in the task
+                for (var x = 0; x < task.records.length; x++) {
+                    var record = task.records[x];
+
+                    console.log(record);
+                }
             }
         }
     }

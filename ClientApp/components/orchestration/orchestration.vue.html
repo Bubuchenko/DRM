@@ -34,7 +34,7 @@
                                                 <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'NULL'">
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
-                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? "NULL" : formatCellValue(props.item[column]) }}</td>
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? "NULL" : formatCellValue(props.item.item2[column]) }}</td>
                                                     </template>
                                                 </v-data-table>
 
@@ -43,7 +43,7 @@
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
                                                         <td v-for="column in generateColumns(set.records)" class="deletedValue">
-                                                            <strike>{{ formatCellValue(props.item[column]) }}</strike>
+                                                            <strike>{{ formatCellValue(props.item.item2[column]) }}</strike>
                                                         </td>
                                                     </template>
                                                 </v-data-table>
@@ -52,7 +52,7 @@
                                                 <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'SHA256'">
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
-                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? SHA256(props.item[column]) : formatCellValue(props.item[column]) }}</td>
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? SHA256(props.item[column]) : formatCellValue(props.item.item2[column]) }}</td>
                                                     </template>
                                                 </v-data-table>
 
@@ -60,7 +60,7 @@
                                                 <v-data-table :headers="generateHeaders(set.records)" :items="set.records" item-key="name" v-if="set.task.type == 'MD5'">
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
-                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? MD5(props.item[column]) : formatCellValue(props.item[column]) }}</td>
+                                                        <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? MD5(props.item[column]) : formatCellValue(props.item.item2[column]) }}</td>
                                                     </template>
                                                 </v-data-table>
                                             </template>

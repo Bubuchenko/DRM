@@ -196,12 +196,12 @@ namespace DRM_Data
                 var recordSet = new ResultSet()
                 {
                     Task = task,
-                    Records = new List<Dictionary<string, object>>()
+                    Records = new List<(int, Dictionary<string, object>)>()
                 };
 
                 foreach (Record record in records.Where(f => f.Task.ID == task.ID))
                 {
-                    recordSet.Records.Add(JsonConvert.DeserializeObject<Dictionary<string, object>>(record.ContentJSON));
+                    recordSet.Records.Add((record.ID, JsonConvert.DeserializeObject<Dictionary<string, object>>(record.ContentJSON)));
                 }
 
                 result.NonCompliantRecordSets.Add(recordSet);
@@ -293,6 +293,12 @@ namespace DRM_Data
                         }
                         break;
                 }
+            }
+            catch (Exception ex)
+            {
+
+            }
+
 
             return (true, "test");
         }
@@ -326,19 +332,6 @@ namespace DRM_Data
             {
                 return (false, ex.Message);
             }
-        }
-
-
-        public async void EvaluateApplications()
-        {
-            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
-
-            foreach (int applicationID in applications)
-            {
-                return (false, ex.Message);
-            }
-
-            return (true, string.Empty);
         }
 
 

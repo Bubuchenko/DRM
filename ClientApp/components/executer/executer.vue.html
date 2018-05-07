@@ -24,7 +24,7 @@
                                 <v-card-text>
                                     <v-container grid-list-md>
                                         <v-layout wrap>
-                                            <v-flex xs12 v-for="(configuration, index) in configurations">
+                                            <v-flex xs12 v-for="(configuration, index) in configurations" :key="configuration.id">
                                                 <v-text-field solo style="color: #fff !important;" :label="configuration.database + ' (' + configuration.server + ')'" :prepend-icon="'storage'" :append-icon="configuration.backupComplete ? 'storage' : 'loop'" :disabled="true"></v-text-field>
                                             </v-flex>
                                         </v-layout>

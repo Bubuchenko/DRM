@@ -81,7 +81,7 @@ export default class OrchestrationComponent extends Vue {
     }
 
     generateColumns(rows: any) {
-        var columns = (Object as any).getOwnPropertyNames(rows[0]);
+        var columns = (Object as any).getOwnPropertyNames(rows[0].item2);
         columns.pop();
         return columns;
     }
@@ -89,7 +89,7 @@ export default class OrchestrationComponent extends Vue {
     generateHeaders(rows: any) {
         var headers: any = [];
 
-        var columns = (Object as any).getOwnPropertyNames(rows[0]);
+        var columns = (Object as any).getOwnPropertyNames(rows[0].item2);
         columns.pop();
 
         for (var i = 0; i < columns.length; i++) {

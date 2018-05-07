@@ -125,5 +125,20 @@ namespace DRM.Controllers
 
             return Ok();
         }
+
+        /// <summary>
+        /// Backs up the database linked to the configuration of the specified task
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("Database/Backup")]
+        public async Task<IActionResult> Backup([FromBody] PostIDViewModel vm)
+        {
+            var result = await _context.Backup(vm.ID);
+
+            if (result.Item1)
+                return Ok(result.Item1);
+
+            return BadRequest(result.Item2);
+        }
     }
 }

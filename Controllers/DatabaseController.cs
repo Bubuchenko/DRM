@@ -113,5 +113,17 @@ namespace DRM.Controllers
 
             return Ok(result);
         }
+
+        /// <summary>
+        /// Evaluates all tasks of all applicationns
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("Database/EvaluateAll")]
+        public async Task<IActionResult> EvaluateApplications()
+        {
+            await _context.EvaluateApplications();
+
+            return Ok();
+        }
     }
 }

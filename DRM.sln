@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRM", "DRM.csproj", "{505BD
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DRM-Data", "DRM-Data\DRM-Data.csproj", "{881B86EC-4CB1-4F04-AF6D-14A0371C71CE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SQLTester", "..\SQLTester\SQLTester.csproj", "{153E87BC-C527-48EC-AACF-ECDCD7EDD447}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,18 @@ Global
 		{881B86EC-4CB1-4F04-AF6D-14A0371C71CE}.Release|x64.Build.0 = Release|Any CPU
 		{881B86EC-4CB1-4F04-AF6D-14A0371C71CE}.Release|x86.ActiveCfg = Release|Any CPU
 		{881B86EC-4CB1-4F04-AF6D-14A0371C71CE}.Release|x86.Build.0 = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|x64.Build.0 = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Debug|x86.Build.0 = Debug|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|x64.ActiveCfg = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|x64.Build.0 = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|x86.ActiveCfg = Release|Any CPU
+		{153E87BC-C527-48EC-AACF-ECDCD7EDD447}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

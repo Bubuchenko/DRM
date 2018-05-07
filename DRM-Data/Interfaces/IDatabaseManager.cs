@@ -13,8 +13,8 @@ namespace DRM_Data.Interfaces
         Task<Tuple<bool, List<string>>> GetTableNames(int ConfigurationID);
         Task<DataTable> GetTableData(GetTableDataParams parameters);
         Task<List<string>> GetValidDateTimeFields(GetDateTimeColumnParams parameters);
-        void EvaluateApplication(int applicationID);
-        void EvaluateApplications();
+        System.Threading.Tasks.Task EvaluateApplication(int applicationID);
+        System.Threading.Tasks.Task EvaluateApplications();
         Task<ApplicationEvaluationResult> GetNonCompliantRecords(int ApplicationID);
         Task<List<ApplicationEvaluationResult>> GetAllNonCompliantRecords();
         Task<(bool, string)> TransformRecord(int RecordID);

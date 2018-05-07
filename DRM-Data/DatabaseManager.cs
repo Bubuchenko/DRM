@@ -89,7 +89,6 @@ namespace DRM_Data
 
             string sqlQuery = $"SELECT TOP 0 * FROM { parameters.TableName }";
 
-
             using (SqlCommand command = new SqlCommand(sqlQuery, _conn))
             {
                 DataTable dataTable = new DataTable();
@@ -106,7 +105,7 @@ namespace DRM_Data
             }
         }
 
-        public async void EvaluateApplication(int applicationID)
+        public async System.Threading.Tasks.Task EvaluateApplication(int applicationID)
         {
             var application = await _context.Applications.Include(f => f.Tasks).FirstOrDefaultAsync(f => f.ID == applicationID);
             var tasks = _context.Tasks.Where(f => f.Application.ID == applicationID).Include(x => x.Condition).Include(x => x.Configuration);
@@ -168,6 +167,16 @@ namespace DRM_Data
             await _context.SaveChangesAsync();
         }
 
+        public async System.Threading.Tasks.Task EvaluateApplications()
+        {
+            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
+
+            foreach (int applicationID in applications)
+            {
+                await EvaluateApplication(applicationID);
+            }
+        }
+
         public async Task<ApplicationEvaluationResult> GetNonCompliantRecords(int ApplicationID)
         {
             var application = await _context.Applications.FindAsync(ApplicationID);
@@ -218,44 +227,84 @@ namespace DRM_Data
 
         public async Task<(bool, string)> TransformRecord(int RecordID)
         {
-            var record = await _context.Records.Include(f => f.Task).ThenInclude(f => f.Configuration).FirstOrDefaultAsync(f => f.ID == RecordID);
-
-            SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(record.Task.Configuration.ID));
-            await _conn.OpenAsync();
-            StringBuilder sqlQuery = new StringBuilder();
-
-            switch (record.Task.Type)
+            try
             {
-                case TaskType.REMOVE:
-                    sqlQuery.Append($"DELETE FROM { record.Task.TableName } WHERE");
+                var record = await _context.Records.Include(f => f.Task).ThenInclude(f => f.Configuration).FirstOrDefaultAsync(f => f.ID == RecordID);
 
-                    foreach (var column in record.Content)
-                    {
-                        sqlQuery.Append($" { column.Key } = { column.Value }");
-                    }
+                SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(record.Task.Configuration.ID));
+                await _conn.OpenAsync();
+                StringBuilder sqlQuery = new StringBuilder();
 
-                    break;
-                case TaskType.NULL:
-                    break;
-                case TaskType.SHA256: //Needs more strict like
-                    sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{  }'");
-                    break;
-                case TaskType.MD5: // Idem
-                    break;
+                switch (record.Task.Type)
+                {
+                    case TaskType.REMOVE:
+                        sqlQuery.Append($"DELETE FROM { record.Task.TableName } WHERE");
+
+                        //All column values must match!
+                        for (int i = 0; i < record.Content.Count; i++)
+                        {
+                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+
+                            //Don't append 'AND' if it's the final value in the collection
+                            if (i < record.Content.Count - 1)
+                                sqlQuery.Append($" AND ");
+                        }
+
+                        break;
+                    case TaskType.NULL:
+                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = 'null' WHERE");
+
+                        //All column values must match!
+                        for (int i = 0; i < record.Content.Count; i++)
+                        {
+                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+
+                            //Don't append 'AND' if it's the final value in the collection
+                            if (i < record.Content.Count - 1)
+                                sqlQuery.Append($" AND ");
+                        }
+                        break;
+                    case TaskType.SHA256: //Needs more strict like
+                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToSHA256() }' WHERE");
+
+                        //All column values must match! 
+                        for (int i = 0; i < record.Content.Count; i++)
+                        {
+                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+
+                            //Don't append 'AND' if it's the final value in the collection
+                            if (i < record.Content.Count - 1)
+                                sqlQuery.Append($" AND ");
+                        }
+                        break;
+                    case TaskType.MD5: // Idem
+                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToMD5() }' WHERE");
+
+                        //All column values must match!
+                        for (int i = 0; i < record.Content.Count; i++)
+                        {
+                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+
+                            //Don't append 'AND' if it's the final value in the collection
+                            if (i < record.Content.Count - 1)
+                                sqlQuery.Append($" AND ");
+                        }
+                        break;
+                }
+
+                using (SqlCommand command = new SqlCommand(sqlQuery.ToString(), _conn))
+                {
+                    await command.ExecuteNonQueryAsync();
+                }
+            }
+            catch(SqlException ex)
+            {
+                return (false, ex.Message);
             }
 
-            return (true, "test");
+            return (true, string.Empty);
         }
 
-        public async void EvaluateApplications()
-        {
-            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
-
-            foreach (int applicationID in applications)
-            {
-                EvaluateApplication(applicationID);
-            }
-        }
 
         private string GetOperator(ConditionType type)
         {

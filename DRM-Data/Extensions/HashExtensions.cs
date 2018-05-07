@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace DRM-Data.Extensions
+namespace DRM_Data.Extensions
 {
     public static class HashExtensions
 {

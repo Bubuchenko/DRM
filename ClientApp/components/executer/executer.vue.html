@@ -36,11 +36,50 @@
                             </v-layout>
                         </v-flex>
                     </v-stepper-content>
-                    <v-stepper-content step="2" v-model="stepProgress">
+                    <v-stepper-content v-for="(application, index) in params" :step="index + 2" v-model="stepProgress" :key="application.applicationName">
+                        <v-flex md12>
+                            <v-card class="stepper_container mb-5" raised>
+                                <v-card-title primary-title>
+                                    <div class="display-1">
+                                        Running transformations on {{ application.applicationName }}
+                                        <v-divider class="mt-2"></v-divider>
+                                    </div>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap justify-center>
+                                            {{ transformationProgress }}
+                                            <v-progress-linear height="20" v-model="transformationProgressPercentage"></v-progress-linear>
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+                            </v-card>
+                            <v-layout row wrap justify-end>
+                                <v-btn class="error" v-on:click="">Cancel operation</v-btn>
+                            </v-layout>
+                        </v-flex>
                     </v-stepper-content>
-                    <v-stepper-content step="3" v-model="stepProgress">
-                    </v-stepper-content>
-                    <v-stepper-content step="4" v-model="stepProgress">
+                    <v-stepper-content :step="params.length + 2" v-model="stepProgress">
+                        <v-flex md12>
+                            <v-card class="stepper_container mb-5" raised>
+                                <v-card-title primary-title>
+                                    <div class="display-1">
+                                        Operation complete
+                                        <v-divider class="mt-2"></v-divider>
+                                    </div>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap justify-center>
+                                            Hype!
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+                            </v-card>
+                            <v-layout row wrap justify-end>
+                                <v-btn class="error" v-on:click="">Cancel operation</v-btn>
+                            </v-layout>
+                        </v-flex>
                     </v-stepper-content>
                 </v-stepper-items>
             </v-stepper>

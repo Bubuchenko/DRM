@@ -32,19 +32,25 @@ namespace DRM_Data
             try
             {
                 _conn = new SqlConnection(await GetSQLConnectionString(ConfigurationID));
-
                 await _conn.OpenAsync();
 
-                DataTable dt = _conn.GetSchema("Tables");
-                List<string> tableNames = new List<string>();
+                string sqlQuery = "SELECT TABLE_SCHEMA, TABLE_NAME FROM INFORMATION_SCHEMA.TABLES WHERE TABLE_TYPE='BASE TABLE'";
 
-                foreach (DataRow row in dt.Rows)
+                using (SqlCommand command = new SqlCommand(sqlQuery, _conn))
                 {
-                    tableNames.Add(row[2].ToString());
-                }
+                    List<string> tableNames = new List<string>();
+                    DataTable dataTable = new DataTable();
+                    SqlDataAdapter da = new SqlDataAdapter(command);
+                    da.Fill(dataTable);
+                    foreach (DataRow row in dataTable.Rows)
+                    {
+                        tableNames.Add($"{row[0]}.{row[1]}");
+                    }
 
-                _conn.Close();
-                return await System.Threading.Tasks.Task.FromResult(Tuple.Create(true, tableNames));
+                    tableNames.Sort();
+                    _conn.Close();
+                    return await System.Threading.Tasks.Task.FromResult(Tuple.Create(true, tableNames));
+                }
             }
             catch (Exception ex)
             {

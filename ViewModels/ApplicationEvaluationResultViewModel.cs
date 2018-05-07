@@ -19,4 +19,3 @@ namespace DRM.ViewModels
         public List<(int, Dictionary<string, object>)> Records { get; set; }
     }
 }
-z

@@ -106,10 +106,12 @@ namespace DRM.Controllers
         /// Returns all currently stored non compliant records from all tasks, from all applications
         /// </summary>
         /// <returns></returns>
-        [HttpGet("Database/TransformRecord")]
-        public async Task<IActionResult> TransformRecord(int id)
+        [HttpPost("Database/TransformRecord")]
+        public async Task<IActionResult> TransformRecord([FromBody] PostIDViewModel id)
         {
-            var result = await _context.TransformRecord(id);
+            var result = await _context.TransformRecord(id.ID);
+
+            await System.Threading.Tasks.Task.Delay(1000);
 
             return Ok(result);
         }

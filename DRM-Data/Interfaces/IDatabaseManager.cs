@@ -18,5 +18,6 @@ namespace DRM_Data.Interfaces
         Task<ApplicationEvaluationResult> GetNonCompliantRecords(int ApplicationID);
         Task<List<ApplicationEvaluationResult>> GetAllNonCompliantRecords();
         Task<(bool, string)> TransformRecord(int RecordID);
+        Task<(bool, string)> Backup(int TaskID);
     }
 }

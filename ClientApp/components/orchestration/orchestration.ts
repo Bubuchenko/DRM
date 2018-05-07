@@ -15,7 +15,8 @@ interface Application {
 
 @Component({
     components: {
-        MenuComponent: require('../navmenu/navmenu.vue.html')
+        MenuComponent: require('../navmenu/navmenu.vue.html'),
+        ExecuterComponent: require('../executer/executer.vue.html')
     }
 })
 export default class OrchestrationComponent extends Vue {
@@ -28,6 +29,9 @@ export default class OrchestrationComponent extends Vue {
 
     ExecutionDialog: boolean = false;
     userHasAgreed: boolean = false;
+    ShowTaskExecuter: boolean = false;
+    TaskExecuterParams: any = {};
+    ConfigurationsParams: string[] = [];
 
     formatCellValue(value: any) {
         if (value.length > 30) value = value.substring(0, 30) + "...";
@@ -41,6 +45,26 @@ export default class OrchestrationComponent extends Vue {
     isInt(value: any) {
         var x = parseFloat(value);
         return !isNaN(value) && (x | 0) === x;
+    }
+
+    getConfigurations(): string[] {
+        if (this.EvaluationResults.length > 0) {
+            var configurations = [];
+            for (var i = 0; i < this.EvaluationResults.length; i++) {
+                for (var x = 0; x < this.EvaluationResults[i].configurations.length; x++) {
+                    configurations.push(this.EvaluationResults[i].configurations[x]);
+                }
+            }
+            return configurations;
+        }
+
+        return [];
+    }
+
+    executeActions() {
+        this.ShowTaskExecuter = true;
+        this.TaskExecuterParams = this.EvaluationResults;
+        this.ConfigurationsParams = this.getConfigurations();
     }
 
     GetRecords() {

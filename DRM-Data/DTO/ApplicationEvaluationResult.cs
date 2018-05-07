@@ -9,6 +9,7 @@ namespace DRM_Data.DTO
     {
         public string ApplicationName { get; set; }
         public List<ResultSet> NonCompliantRecordSets { get; set; }
+        public List<Configuration> Configurations { get; set; }
 
     }
 

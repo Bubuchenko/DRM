@@ -89,20 +89,23 @@
                         <v-flex xs12>
                             <v-card raised class="drm-eula">
                                 <v-card-text class="kbd">
-                                        All the to changes shown to you will be executed by you and are irreversible. Are you sure you want to proceed?
+                                    All the changes shown to you will be executed by you and are irreversible. Are you sure you want to proceed?
                                 </v-card-text>
                             </v-card>
                             <v-flex>
-                                <v-checkbox class="mt-2" label="I accept the presented changes" v-model="userHasAgreed"></v-checkbox>
+                                <v-checkbox class="mt-2" label="I accept these changes" v-model="userHasAgreed"></v-checkbox>
                             </v-flex>
                         </v-flex>
                     </v-layout>
                 </v-container>
                 <v-card-actions>
-                    <v-btn color="primary" flat>Close</v-btn>
+                    <v-spacer></v-spacer>
+                    <v-btn class="success" @click.native="ExecutionDialog = false, userHasAgreed = false">Cancel</v-btn>
+                    <v-btn class="error" :disabled="!userHasAgreed" raised @click.native="executeActions()">Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
+        <executer-component :configurations="ConfigurationsParams" :params="TaskExecuterParams" v-model="ShowTaskExecuter"/>
     </v-layout>
 </template>
 

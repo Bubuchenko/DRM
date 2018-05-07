@@ -10,7 +10,7 @@ namespace DRM.ViewModels
         public string ApplicationName { get; set; }
         public int TotalRecords { get; set; }
         public List<ResultSetViewModel> NonCompliantRecordSets { get; set; }
-
+        public List<ConfigurationViewModel> Configurations { get; set; }
     }
 
     public class ResultSetViewModel

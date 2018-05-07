@@ -12,6 +12,7 @@ using DRM_Data.DTO;
 using System.Linq;
 using DRM_Data.Extensions;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace DRM_Data
 {
@@ -180,7 +181,8 @@ namespace DRM_Data
         public async Task<ApplicationEvaluationResult> GetNonCompliantRecords(int ApplicationID)
         {
             var application = await _context.Applications.FindAsync(ApplicationID);
-            var records = await _context.Records.Include(f => f.Task).Where(f => f.Task.Application.ID == ApplicationID && !f.IsCompliant).ToListAsync();
+            var records = await _context.Records.Include(f => f.Task).ThenInclude(x => x.Configuration).Where(f => f.Task.Application.ID == ApplicationID && !f.IsCompliant).ToListAsync();
+            var configurations = new List<Configuration>();
 
             ApplicationEvaluationResult result = new ApplicationEvaluationResult()
             {
@@ -190,6 +192,7 @@ namespace DRM_Data
 
             foreach (var task in records.Select(f => f.Task).Distinct())
             {
+                configurations.Add(task.Configuration);
                 var recordSet = new ResultSet()
                 {
                     Task = task,
@@ -204,7 +207,7 @@ namespace DRM_Data
                 result.NonCompliantRecordSets.Add(recordSet);
             }
 
-
+            result.Configurations = configurations.Distinct().ToList();
             return result;
         }
 
@@ -221,7 +224,6 @@ namespace DRM_Data
                 if (result.NonCompliantRecordSets.Count > 0)
                     results.Add(await GetNonCompliantRecords(applicationID));
             }
-
             return results;
         }
 
@@ -292,12 +294,46 @@ namespace DRM_Data
                         break;
                 }
 
-                using (SqlCommand command = new SqlCommand(sqlQuery.ToString(), _conn))
+            return (true, "test");
+        }
+
+        public async Task<(bool, string)> Backup(int configurationID)
+        {
+            try
+            {
+                string BackupDirectory = _context.Settings.FirstOrDefault(f => f.Name == "BackupDirectory").Value;
+                var configuration = await _context.Configurations.FindAsync(configurationID);
+
+                var backupFileName = String.Format("{0}{1}-{2}.bak", BackupDirectory, configuration.Database, DateTime.Now.ToString("yyyy-MM-dd hh mm ss"));
+
+                if (!Directory.Exists(BackupDirectory))
+                    Directory.CreateDirectory(BackupDirectory);
+
+                using (SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(configuration.ID)))
                 {
-                    await command.ExecuteNonQueryAsync();
+                    string query = String.Format("BACKUP DATABASE {0} TO DISK='{1}'", configuration.Database, backupFileName);
+
+                    using (var command = new SqlCommand(query, _conn))
+                    {
+                        await _conn.OpenAsync();
+                        command.ExecuteNonQuery();
+                    }
                 }
+
+                return (true, backupFileName);
             }
-            catch(SqlException ex)
+            catch(Exception ex)
+            {
+                return (false, ex.Message);
+            }
+        }
+
+
+        public async void EvaluateApplications()
+        {
+            var applications = await _context.Applications.Select(f => f.ID).ToListAsync();
+
+            foreach (int applicationID in applications)
             {
                 return (false, ex.Message);
             }

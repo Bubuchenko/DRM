@@ -1,0 +1,87 @@
+<template>
+    <v-layout row justify-center>
+        <v-dialog v-model="value" fullscreen transition="dialog-bottom-transition">
+            <v-stepper v-model="stepProgress">
+                <v-stepper-header>
+                    <v-stepper-step step="1" :complete="stepProgress > 1">Backup data</v-stepper-step>
+                    <v-divider></v-divider>
+                    <template v-for="(Application, index) in params">
+                        <v-stepper-step :step="index + 2" :complete="stepProgress > index + 2" :key="Application.applicationName">{{ Application.applicationName }}</v-stepper-step>
+                        <v-divider></v-divider>
+                    </template>
+                    <v-stepper-step :step="params.length + 2">Complete</v-stepper-step>
+                </v-stepper-header>
+                <v-stepper-items>
+                    <v-stepper-content step="1" v-model="stepProgress">
+                        <v-flex md12>
+                            <v-card class="stepper_container mb-5" raised>
+                                <v-card-title primary-title>
+                                    <div class="display-1">
+                                        Creating backups
+                                        <v-divider class="mt-2"></v-divider>
+                                    </div>
+                                </v-card-title>
+                                <v-card-text>
+                                    <v-container grid-list-md>
+                                        <v-layout wrap>
+                                            <v-flex xs12 v-for="(configuration, index) in configurations">
+                                                <v-text-field solo style="color: #fff !important;" :label="configuration.database + ' (' + configuration.server + ')'" :prepend-icon="'storage'" :append-icon="configuration.backupComplete ? 'storage' : 'loop'" :disabled="true"></v-text-field>
+                                            </v-flex>
+                                        </v-layout>
+                                    </v-container>
+                                </v-card-text>
+                            </v-card>
+                            <v-layout row wrap justify-end>
+                                <v-btn class="error" v-on:click="">Cancel operation</v-btn>
+                            </v-layout>
+                        </v-flex>
+                    </v-stepper-content>
+                    <v-stepper-content step="2" v-model="stepProgress">
+                    </v-stepper-content>
+                    <v-stepper-content step="3" v-model="stepProgress">
+                    </v-stepper-content>
+                    <v-stepper-content step="4" v-model="stepProgress">
+                    </v-stepper-content>
+                </v-stepper-items>
+            </v-stepper>
+        </v-dialog>
+    </v-layout>
+</template>
+
+<script src="./executer.ts"></script>
+
+<style>
+    .table-container {
+        padding: 0px;
+    }
+
+    .blurOut {
+        opacity: 0.4;
+    }
+
+    .changedValue {
+        color: orange;
+        font-weight: bold !important;
+    }
+
+    .deletedValue {
+        color: red;
+        font-weight: bold !important;
+        opacity: 0.7;
+    }
+
+    .drm-eula {
+        font-size: 18px;
+        font-weight: 300;
+    }
+
+    .kbd {
+        background: #131218 !important;
+    }
+
+    .display-2 {
+        font-weight: bold;
+        background-color: #212232 !important;
+    }
+
+</style>

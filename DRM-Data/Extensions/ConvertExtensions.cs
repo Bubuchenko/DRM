@@ -17,7 +17,7 @@ namespace DRM_Data.Extensions
                 row = new Dictionary<string, object>();
                 foreach (DataColumn col in value.Columns)
                 {
-                    row.Add(col.ColumnName, dr[col]);
+                    row.Add(col.ColumnName, dr[col].ToString().Length == 0 ? "" : dr[col]);
                 }
                 rows.Add(row);
             }

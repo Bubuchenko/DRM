@@ -19,6 +19,9 @@ export default class ExecuterComponent extends Vue {
     value!: boolean;
 
     stepProgress: number = 1;
+    taskIDs: number[] = [];
+    taskProgress: any = {};
+
 
     @Prop({ default: {} })
     params!: any;
@@ -30,7 +33,6 @@ export default class ExecuterComponent extends Vue {
     onvalueChanged(val: any, oldVal: any) {
         //Trigger for starting the excuter
         if (val == true) {
-            this.setupApplicationStates();
             //this.BackupDatabases();
         }
     }
@@ -38,88 +40,70 @@ export default class ExecuterComponent extends Vue {
     @Watch('stepProgress')
     onstepChanged(val: number, oldVal: number) {
         if (val > 1) {
-            this.performTransformations();        
+            this.performTransformations();
         }
     }
 
-    applicationsStates: any = [];
-
-    setupApplicationStates() {
-        for (var i = 0; i < this.params.length; i++) {
-            var application = this.params[i];
-            var applicationState = {
-                name: application.applicationName,
-                transformations: [],
-                index: 0
-            };
-
-            this.applicationsStates.push(applicationState);
-        }
-
-        this.stepProgress++;
-    }
-    
     performTransformations() {
         if (this.params.length > 0) {
-            var state = this.applicationsStates[this.stepProgress - 2];
+
+            //List of all transformations
+            var transformations = [];
+
             //For each task in application
             for (var i = 0; i < this.params[this.stepProgress - 2].nonCompliantRecordSets.length; i++) {
                 var task = this.params[this.stepProgress - 2].nonCompliantRecordSets[i];
-
                 //For each record in the task
                 for (var x = 0; x < task.records.length; x++) {
-                    var record = task.records[x];
-                    state.transformations.push(record);
+                    var record = task.records[x].item1;
+                    //Add the transformation
+                    transformations.push(record);
                 }
             }
 
-            //Apply the actual transformations
-            for (var i = 0; i < state.transformations.length; i++) {
-                this.transformRecord(state.transformations[i]);
-            }
+            this.transformRecords(transformations);
+
+            setInterval(this.getTaskProgress, 3000);
         }
     }
 
-
-    get transformationProgress(): any {
-        var state = this.applicationsStates[this.stepProgress - 2];
-
-        return state != null ? state.index + " out of " + state.transformations.length : "";
+    getTaskProgress() {
+        this.$http.get('Database/GetTaskProgress', {
+            params: {
+                id: this.taskIDs[this.taskIDs.length - 1]
+            }
+        }).then((response: any) => {
+            this.taskProgress = response.data;
+        }).catch((error: any) => {
+            console.log("error:" + error.response);
+        });
     }
 
-    get transformationProgressPercentage(): any {
-        var state = this.applicationsStates[this.stepProgress - 2];
-
-        if (state == null)
+    get progressPercentage() {
+        if (this.taskProgress == null)
             return 0;
 
-        return (state.index / state.transformations.length) * 100;
+        return Math.round((this.taskProgress.completedItems / this.taskProgress.totalItems) * 100);
     }
 
-    get totalTransformations(): any {
-        return this.applicationsStates[this.stepProgress - 2] != null ? this.applicationsStates[this.stepProgress - 2].index : ""
+    transformRecords(records: any) {
+        var taskID = Math.round((new Date()).getTime() / 1000); //UNIX timestamp as ID
+        this.taskIDs.push(taskID);
+        this.$http.post('Database/TransformRecords', {
+            ID: taskID,
+            RecordIDs: records
+        }).then((response: any) => {
+            //Finished? Next step
+            this.stepProgress++;
+        }).catch((error: any) => {
+            console.log("error:" + error.response);
+        });
     }
 
     BackupDatabases() {
-        for (var i = 0; i < this.configurations.length; i++) {  
+        for (var i = 0; i < this.configurations.length; i++) {
             this.backupDatabase(this.configurations[i]);
         }
-    }
-
-    transformRecord(record: any) {
-        var state = this.applicationsStates[this.stepProgress - 2];
-        this.$http.post('Database/TransformRecord', {
-            id: record.item1,
-        }).then((response: any) => {
-            state.index++;
-            record.item3 = response.data;
-
-            //If finished, go to next application
-            if (this.transformationProgressPercentage == 100)
-                this.stepProgress++;
-
-        }).catch((error: any) => {
-        });
     }
 
     backupDatabase(configuration: any) {
@@ -127,7 +111,7 @@ export default class ExecuterComponent extends Vue {
             id: configuration.id,
         }).then((response: any) => {
             configuration.backupComplete = response.data;
-            }).catch((error: any) => {
+        }).catch((error: any) => {
         });
     }
 }

@@ -12,9 +12,10 @@ using System;
 namespace DRMData.Migrations
 {
     [DbContext(typeof(DRMContext))]
-    partial class DRMContextModelSnapshot : ModelSnapshot
+    [Migration("20180508131146_201805081")]
+    partial class _201805081
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -83,8 +84,6 @@ namespace DRMData.Migrations
                     b.Property<string>("ContentJSON");
 
                     b.Property<DateTime>("CreationDate");
-
-                    b.Property<string>("Error");
 
                     b.Property<DateTime?>("ExecutionDate");
 

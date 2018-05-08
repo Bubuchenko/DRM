@@ -10,6 +10,12 @@
                     The following non-compliant records have been identified. Inspect these changes carefully before proceeding.
                 </v-card-title>
                 <v-card-text>
+                    <v-flex md12 justify-center>
+                        <v-flex md12 v-if="EvaluationResults.length == 0">
+                            <div>Fetching non compliant records...</div>
+                            <v-progress-linear :indeterminate="true"></v-progress-linear>
+                        </v-flex>
+                    </v-flex>
                     <div>
                         <v-tabs dark slider-color="yellow" tabs v-if="EvaluationResults.length > 0">
                             <v-tab v-for="evaluation in EvaluationResults"
@@ -105,7 +111,7 @@
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <executer-component :configurations="ConfigurationsParams" :params="TaskExecuterParams" v-model="ShowTaskExecuter"/>
+        <executer-component :configurations="ConfigurationsParams" :params="TaskExecuterParams" v-model="ShowTaskExecuter" />
     </v-layout>
 </template>
 
@@ -144,5 +150,4 @@
         font-weight: bold;
         background-color: #212232 !important;
     }
-
 </style>

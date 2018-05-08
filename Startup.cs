@@ -15,6 +15,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 using Swashbuckle.AspNetCore.Swagger;
 
 namespace DRM
@@ -26,6 +28,7 @@ namespace DRM
             Configuration = configuration;
 
         }
+
 
         public IConfiguration Configuration { get; }
 
@@ -45,13 +48,10 @@ namespace DRM
                 cfg.AddProfile<AutoMapperProfile>();
             });
 
-
             services.AddScoped<IApplicationManager, ApplicationManager>();
             services.AddScoped<IDatabaseManager, DatabaseManager>();
             services.AddScoped<IConfigurationManager, ConfigurationManager>();
             services.AddScoped<ITaskManager, TaskManager>();
-
-
 
             services.AddSwaggerGen(c =>
             {
@@ -90,8 +90,6 @@ namespace DRM
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
-
 
             app.UseStaticFiles();
 

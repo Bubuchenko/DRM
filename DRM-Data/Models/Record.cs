@@ -9,7 +9,9 @@ namespace DRM_Data.Models
     {
         public string ContentJSON { get; set; }
         public virtual Task Task { get; set; }
+        public string PrimaryKeyColumn { get; set; }
         public DateTime? ExecutionDate { get; set; }
+        public string Error { get; set; }
         public bool IsCompliant
         {
             get

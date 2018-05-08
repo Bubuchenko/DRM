@@ -48,8 +48,11 @@
                                 <v-card-text>
                                     <v-container grid-list-md>
                                         <v-layout wrap justify-center>
-                                            {{ transformationProgress }}
-                                            <v-progress-linear height="20" v-model="transformationProgressPercentage"></v-progress-linear>
+                                            <template v-if="taskProgress != []">
+                                                {{ taskProgress.completedItems }} out of {{ taskProgress.totalItems }}
+                                                <v-progress-linear height="20" :value="progressPercentage"></v-progress-linear>
+                                                {{ progressPercentage }}
+                                            </template>
                                         </v-layout>
                                     </v-container>
                                 </v-card-text>
@@ -70,14 +73,14 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container grid-list-md>
-                                        <v-layout wrap justify-center>
+                                        <v-layout wrap justify-center >
                                             Hype!
                                         </v-layout>
                                     </v-container>
                                 </v-card-text>
                             </v-card>
                             <v-layout row wrap justify-end>
-                                <v-btn class="error" v-on:click="">Cancel operation</v-btn>
+                                <v-btn class="success" v-on:click="">Close</v-btn>
                             </v-layout>
                         </v-flex>
                     </v-stepper-content>

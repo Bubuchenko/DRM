@@ -150,6 +150,7 @@ namespace DRM_Data
                 {
                     DataTable dataTable = new DataTable();
                     SqlDataAdapter da = new SqlDataAdapter(command);
+                    da.MissingSchemaAction = MissingSchemaAction.AddWithKey;
                     da.Fill(dataTable);
 
                     var records = dataTable.ToRows();
@@ -161,11 +162,20 @@ namespace DRM_Data
 
                         if (!existingRecord)
                         {
-                            _context.Records.Add(new Record()
+                            Record newRec = new Record()
                             {
                                 Task = task,
-                                ContentJSON = JsonConvert.SerializeObject(record)
-                            });
+                                ContentJSON = content
+                            };
+
+                            foreach (DataColumn column in dataTable.Columns)
+                            {
+                                bool isPrimaryKeyColumn = dataTable.PrimaryKey.Contains(column);
+
+                                if (isPrimaryKeyColumn)
+                                    newRec.PrimaryKeyColumn = column.ColumnName;
+                            }
+                            _context.Records.Add(newRec);
                         }
                     }
                 }
@@ -235,78 +245,55 @@ namespace DRM_Data
 
         public async Task<(bool, string)> TransformRecord(int RecordID)
         {
+            Record record = new Record();
             try
             {
-                var record = await _context.Records.Include(f => f.Task).ThenInclude(f => f.Configuration).FirstOrDefaultAsync(f => f.ID == RecordID);
+                record = await _context.Records.Include(f => f.Task).ThenInclude(f => f.Configuration).FirstOrDefaultAsync(f => f.ID == RecordID);
 
-                SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(record.Task.Configuration.ID));
-                await _conn.OpenAsync();
-                StringBuilder sqlQuery = new StringBuilder();
-
-                switch (record.Task.Type)
+                using (SqlConnection _conn = new SqlConnection(await GetSQLConnectionString(record.Task.Configuration.ID)))
                 {
-                    case TaskType.REMOVE:
-                        sqlQuery.Append($"DELETE FROM { record.Task.TableName } WHERE");
+                    await _conn.OpenAsync();
+                    StringBuilder sqlQuery = new StringBuilder();
 
-                        //All column values must match!
-                        for (int i = 0; i < record.Content.Count; i++)
-                        {
-                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+                    switch (record.Task.Type)
+                    {
+                        case TaskType.REMOVE:
+                            sqlQuery.Append($"DELETE FROM { record.Task.TableName } WHERE");
+                            break;
+                        case TaskType.NULL:
+                            sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = 'null' WHERE");
 
-                            //Don't append 'AND' if it's the final value in the collection
-                            if (i < record.Content.Count - 1)
-                                sqlQuery.Append($" AND ");
-                        }
+                            break;
+                        case TaskType.SHA256: //Needs more strict like
+                            sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToSHA256() }' WHERE");
 
-                        break;
-                    case TaskType.NULL:
-                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = 'null' WHERE");
+                            break;
+                        case TaskType.MD5: // Idem
+                            sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToMD5() }' WHERE");
+                            break;
+                    }
 
-                        //All column values must match!
-                        for (int i = 0; i < record.Content.Count; i++)
-                        {
-                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
+                    sqlQuery.Append($" { record.PrimaryKeyColumn } = '{ record.Content[record.PrimaryKeyColumn] }'");
 
-                            //Don't append 'AND' if it's the final value in the collection
-                            if (i < record.Content.Count - 1)
-                                sqlQuery.Append($" AND ");
-                        }
-                        break;
-                    case TaskType.SHA256: //Needs more strict like
-                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToSHA256() }' WHERE");
-
-                        //All column values must match! 
-                        for (int i = 0; i < record.Content.Count; i++)
-                        {
-                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
-
-                            //Don't append 'AND' if it's the final value in the collection
-                            if (i < record.Content.Count - 1)
-                                sqlQuery.Append($" AND ");
-                        }
-                        break;
-                    case TaskType.MD5: // Idem
-                        sqlQuery.Append($"UPDATE { record.Task.TableName } SET { record.Task.ColumnName } = '{ record.Content[record.Task.ColumnName].ToString().ToMD5() }' WHERE");
-
-                        //All column values must match!
-                        for (int i = 0; i < record.Content.Count; i++)
-                        {
-                            sqlQuery.Append($" { record.Content.ElementAt(i).Key } = '{ record.Content.ElementAt(i).Value }'");
-
-                            //Don't append 'AND' if it's the final value in the collection
-                            if (i < record.Content.Count - 1)
-                                sqlQuery.Append($" AND ");
-                        }
-                        break;
+                    using (var command = new SqlCommand(sqlQuery.ToString(), _conn))
+                    {
+                        command.ExecuteNonQuery();
+                    }
                 }
+
+                record.ExecutionDate = DateTime.Now;
             }
             catch (Exception ex)
             {
-
+                record.Error = ex.ToString();
+                await _context.SaveChangesAsync();
+                return (false, ex.Message);
             }
 
+            record.ContentJSON = string.Empty;
+            await _context.SaveChangesAsync();
 
-            return (true, "test");
+            return (true, string.Empty);
         }
 
         public async Task<(bool, string)> Backup(int configurationID)

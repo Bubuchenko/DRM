@@ -13,9 +13,24 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace DRM.Controllers
 {
+    public class RunningTask
+    {
+        public int ID { get; set; }
+        public bool IsCancelled { get; set; }
+        public int totalItems { get; set; }
+        public int completedItems { get; set; }
+        public IDictionary<int, string> FailedItems { get; set; }
+    }
+
+    public static class DatabaseActionsState
+    {
+        public static List<RunningTask> RunningTasks = new List<RunningTask>();
+    }
+
     public class DatabaseController : Controller
     {
         private IDatabaseManager _context;
+
 
         public DatabaseController(IDatabaseManager context)
         {
@@ -114,6 +129,57 @@ namespace DRM.Controllers
             await System.Threading.Tasks.Task.Delay(1000);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Transforms all specified records
+        /// </summary>
+        /// <returns></returns>
+        [HttpPost("Database/TransformRecords")]
+        public async Task<IActionResult> TransformRecords([FromBody] TransformRecordsViewModel transformParams)
+        {
+            RunningTask task = new RunningTask()
+            {
+                ID = transformParams.ID,
+                FailedItems = new Dictionary<int, string>(),
+                totalItems = transformParams.RecordIDs.Count
+            };
+
+            DatabaseActionsState.RunningTasks.Add(task);
+
+            var queuedTask = DatabaseActionsState.RunningTasks.FirstOrDefault(f => f.ID == task.ID);
+
+            await System.Threading.Tasks.Task.Delay(2000);
+
+            for (var i = 0; i < transformParams.RecordIDs.Count; i++)
+            {
+                if (task.IsCancelled)
+                    break;
+
+                var record = transformParams.RecordIDs[i];
+                var result = await _context.TransformRecord(record);
+
+                if (result.Item1 == false)
+                    queuedTask.FailedItems.Add(record, result.Item2);
+
+                queuedTask.completedItems++;
+            }
+
+            return Ok();
+        }
+
+        [HttpGet("Database/RunningTasks")]
+        public async Task<IActionResult> RunningTasks()
+        {
+            await System.Threading.Tasks.Task.Delay(1);
+            return Ok(DatabaseActionsState.RunningTasks);
+        }
+
+        [HttpGet("Database/GetTaskProgress")]
+        public async Task<IActionResult> TaskProgress(int id)
+        {
+            await System.Threading.Tasks.Task.Delay(0);
+            return Ok(DatabaseActionsState.RunningTasks.FirstOrDefault(f => f.ID == id));
         }
 
         /// <summary>

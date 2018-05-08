@@ -22,7 +22,7 @@ interface Application {
 export default class OrchestrationComponent extends Vue {
     $route: any;
     $http: any;
-    EvaluationResults: any = {};
+    EvaluationResults: any = [];
 
     @Prop({ default: false })
     value!: boolean;

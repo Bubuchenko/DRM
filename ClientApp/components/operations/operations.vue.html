@@ -14,12 +14,10 @@
                             {{ task.completedItems }} out of {{ task.totalItems }}
                             <v-progress-linear height="20" :value="(task.completedItems / task.totalItems) * 100"></v-progress-linear>
                         </template>
+                        <v-btn class="error" small> Cancel </v-btn>
                     </v-layout>
                 </v-container>
             </v-card-text>
-            <v-card-actions>
-                <v-btn class="error" v-on:click="">Cancel operation  </v-btn>
-            </v-card-actions>
         </v-card>
     </v-flex>
 </template>

@@ -73,6 +73,15 @@ namespace DRM_Data
             }
         }
 
+        public async Task<bool> IsCompliant(int applicationID)
+        {
+            var app = _context.Applications.FirstOrDefaultAsync(f => f.ID == applicationID).Result;
+
+            var isCompliant = await _context.Records.AnyAsync(f => f.Task.Application.ID == applicationID && !f.IsCompliant);
+
+            return !isCompliant;
+        }
+
         public async Task<List<Application>> GetAllApplications()
         {
             return await _context.Applications.Include(f => f.Tasks).ToListAsync();

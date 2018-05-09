@@ -177,6 +177,7 @@ namespace DRM_Data
                             }
                             _context.Records.Add(newRec);
                         }
+                        await _context.SaveChangesAsync();
                     }
                 }
             }
@@ -191,6 +192,28 @@ namespace DRM_Data
             foreach (int applicationID in applications)
             {
                 await EvaluateApplication(applicationID);
+            }
+
+            var LastRunSetting = await _context.Settings.FirstOrDefaultAsync(f => f.Name == "LastRun");
+            LastRunSetting.Value = DateTime.Now.ToString();
+            await _context.SaveChangesAsync();
+        }
+
+        public async System.Threading.Tasks.Task ShouldEvaluate()
+        {
+            var LastRunSetting = await _context.Settings.FirstOrDefaultAsync(f => f.Name == "LastRun");
+            var TaskInterval = await _context.Settings.FirstOrDefaultAsync(f => f.Name == "TaskEvaluationInterval");
+
+            if (LastRunSetting.Value.Length > 0)
+            {
+                DateTime LastRunDate = DateTime.Parse(LastRunSetting.Value);
+                if ((DateTime.Now - LastRunDate).TotalDays >= double.Parse(TaskInterval.Value))
+                {
+                    await EvaluateApplications();
+                }
+            } else
+            {
+                await EvaluateApplications();
             }
         }
 
@@ -212,12 +235,12 @@ namespace DRM_Data
                 var recordSet = new ResultSet()
                 {
                     Task = task,
-                    Records = new List<(int, Dictionary<string, object>)>()
+                    Records = new List<(int, Dictionary<string, object>, string)>()
                 };
 
                 foreach (Record record in records.Where(f => f.Task.ID == task.ID))
                 {
-                    recordSet.Records.Add((record.ID, JsonConvert.DeserializeObject<Dictionary<string, object>>(record.ContentJSON)));
+                    recordSet.Records.Add((record.ID, JsonConvert.DeserializeObject<Dictionary<string, object>>(record.ContentJSON), record.Error));
                 }
 
                 result.NonCompliantRecordSets.Add(recordSet);
@@ -314,8 +337,9 @@ namespace DRM_Data
 
                     using (var command = new SqlCommand(query, _conn))
                     {
+                        command.CommandTimeout = 0;
                         await _conn.OpenAsync();
-                        command.ExecuteNonQuery();
+                        await command.ExecuteNonQueryAsync();
                     }
                 }
 
@@ -353,7 +377,7 @@ namespace DRM_Data
                 $"server={configuration.Server};" +
                 $"Trusted_Connection=yes;" +
                 $"database={configuration.Database};" +
-                $"connection timeout=5; " +
+                $"Connection timeout=60; " +
                 $"integrated security=True";
         }
     }

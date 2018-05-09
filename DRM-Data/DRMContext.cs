@@ -8,6 +8,10 @@ namespace DRM_Data
 {
     public class DRMContext : DbContext
     {
+        public DRMContext()
+        {
+        }
+
         public DRMContext(DbContextOptions<DRMContext> options) : base(options)
         {
         }

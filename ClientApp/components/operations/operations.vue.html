@@ -1,0 +1,46 @@
+<template>
+    <v-flex md12>
+        <v-card class="stepper_container mb-5" raised v-for="task in runningTasks">
+            <v-card-title primary-title>
+                <div class="display-1">
+                    {{ task.applicationName }} ({{ task.id }})
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+            </v-card-title>
+            <v-card-text>
+                <v-container grid-list-md>
+                    <v-layout wrap justify-center>
+                        <template>
+                            {{ task.completedItems }} out of {{ task.totalItems }}
+                            <v-progress-linear height="20" :value="(task.completedItems / task.totalItems) * 100"></v-progress-linear>
+                        </template>
+                    </v-layout>
+                </v-container>
+            </v-card-text>
+            <v-card-actions>
+                <v-btn class="error" v-on:click="">Cancel operation  </v-btn>
+            </v-card-actions>
+        </v-card>
+    </v-flex>
+</template>
+<script src="./operations.ts"></script>
+
+<style>
+    .display-1 {
+        width: 100%;
+        font-weight: bold;
+    }
+
+    .appcard {
+        display: flex;
+        flex-direction: column;
+        cursor: default;
+    }
+
+    .appcard-text {
+        display: flex;
+        flex-grow: 1;
+        padding-top: 0px;
+        font-weight: 100;
+    }
+</style>

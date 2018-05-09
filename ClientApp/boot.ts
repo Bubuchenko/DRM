@@ -20,7 +20,9 @@ Vue.prototype.$http = Axios;
 const routes = [
     { path: '/', component: require('./components/dashboard/dashboard.vue.html') },
     { path: '/Application/:id', component: require('./components/application/application.vue.html'), props: true },
-    { path: '/Orchestrator', component: require('./components/orchestration/orchestration.vue.html')},
+    { path: '/Orchestrator', component: require('./components/orchestration/orchestration.vue.html') },
+    { path: '/Settings', component: require('./components/settings/settings.vue.html') },
+    { path: '/Operations', component: require('./components/operations/operations.vue.html') }
 ];
 
 

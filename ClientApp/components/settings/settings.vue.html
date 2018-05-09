@@ -1,0 +1,78 @@
+<template>
+    <v-flex md12>
+        <v-card class="stepper_container mb-5" raised>
+            <v-card-title primary-title>
+                <div class="display-1">
+                    Settings
+                    <v-divider class="mt-2"></v-divider>
+                </div>
+            </v-card-title>
+            <v-card-text>
+                <v-container grid-list-md>
+
+                    <v-subheader>Database backup directory</v-subheader>
+                    <v-card-text>
+                        <v-text-field solo required prepend-icon="folder" v-model="settings.backupDirectory"></v-text-field>
+                    </v-card-text>
+
+                    <v-subheader>Task evaluation interval</v-subheader>
+                    <v-card-text>
+                        <v-slider :label="settings.taskEvaluationInterval + ' days'" v-model="settings.taskEvaluationInterval" prepend-icon="timer"></v-slider>
+                    </v-card-text>
+
+                    <v-subheader>Mail subscribers</v-subheader>
+                    <template>
+                        <v-select v-model="settings.mailSubscribers"
+                                  label="E-mail subscribers"
+                                  chips
+                                  tags
+                                  solo
+                                  prepend-icon="alternate_email"
+                                  append-icon=""
+                                  clearable>
+                            <template slot="selection" slot-scope="data">
+                                <v-chip :selected="data.selected"
+                                        close
+                                        @input="removeMail(data.item)">
+                                    <strong>{{ data.item }}</strong>&nbsp;
+                                    <span>(mail address)</span>
+                                </v-chip>
+                            </template>
+                        </v-select>
+                    </template>
+
+                    <v-subheader>Mail reminder timer</v-subheader>
+                    <v-card-text>
+                        <v-slider :label="settings.mailReminderInterval + ' days'" v-model="settings.mailReminderInterval" prepend-icon="timer"></v-slider>
+                    </v-card-text>
+
+                </v-container>
+            </v-card-text>
+            <v-layout row wrap justify-end class="pb-3">
+                <v-btn color="primary" @click.native="SaveSettings()">Save changes <v-icon right>save</v-icon></v-btn>
+                <v-btn flat v-on:click="GetSettings()">Reset <v-icon right>restore</v-icon></v-btn>
+            </v-layout>
+        </v-card>
+    </v-flex>
+</template>
+<script src="./settings.ts"></script>f
+
+<style>
+    .display-1 {
+        width: 100%;
+        font-weight: bold;
+    }
+
+    .appcard {
+        display: flex;
+        flex-direction: column;
+        cursor: default;
+    }
+
+    .appcard-text {
+        display: flex;
+        flex-grow: 1;
+        padding-top: 0px;
+        font-weight: 100;
+    }
+</style>

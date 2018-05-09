@@ -16,6 +16,6 @@ namespace DRM.ViewModels
     public class ResultSetViewModel
     {
         public TaskViewModel Task { get; set; }
-        public List<(int, Dictionary<string, object>)> Records { get; set; }
+        public List<(int, Dictionary<string, object>, string)> Records { get; set; }
     }
 }

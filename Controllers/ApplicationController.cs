@@ -28,10 +28,10 @@ namespace DRM.Controllers
             foreach (var application in applications)
             {
                 var applicationVM = Mapper.Map<ApplicationViewModel>(application);
+                applicationVM.IsCompliant = await _applicationManager.IsCompliant(application.ID);
 
                 applicationVMs.Add(applicationVM);
             }
-
             return Ok(applicationVMs);
         }
 

@@ -16,6 +16,6 @@ namespace DRM_Data.DTO
     public class ResultSet
     {
         public Task Task { get; set; }
-        public List<(int, Dictionary<string, object>)> Records {get; set; }
+        public List<(int, Dictionary<string, object>, string)> Records {get; set; }
     }
 }

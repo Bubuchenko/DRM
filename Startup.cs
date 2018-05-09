@@ -30,6 +30,7 @@ namespace DRM
         }
 
 
+        public ISettingsManager _settingsManager;
         public IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
@@ -49,8 +50,9 @@ namespace DRM
             });
 
             services.AddScoped<IApplicationManager, ApplicationManager>();
-            services.AddScoped<IDatabaseManager, DatabaseManager>();
             services.AddScoped<IConfigurationManager, ConfigurationManager>();
+            services.AddScoped<IDatabaseManager, DatabaseManager>();
+            services.AddScoped<ISettingsManager, SettingManager>();
             services.AddScoped<ITaskManager, TaskManager>();
 
             services.AddSwaggerGen(c =>
@@ -113,6 +115,7 @@ namespace DRM
                     name: "spa-fallback",
                     defaults: new { controller = "Home", action = "Index" });
             });
+
         }
     }
 }

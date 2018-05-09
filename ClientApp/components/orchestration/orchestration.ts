@@ -33,6 +33,9 @@ export default class OrchestrationComponent extends Vue {
     TaskExecuterParams: any = {};
     ConfigurationsParams: string[] = [];
 
+    errorDialog: boolean = false;
+    errorDialogText: string = "";
+
     formatCellValue(value: any) {
         if (value.length > 30) value = value.substring(0, 30) + "...";
 
@@ -96,6 +99,8 @@ export default class OrchestrationComponent extends Vue {
             var header: any = { text: columns[i], value: columns[i] };
             headers.push(header);
         }
+
+        headers.push({ text: '', value: '' });
 
         return headers;
     }

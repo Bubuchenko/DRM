@@ -24,8 +24,8 @@
                                 <v-card-text>
                                     <v-container grid-list-md>
                                         <v-layout wrap>
-                                            <v-flex xs12 v-for="(configuration, index) in configurations" :key="configuration.id">
-                                                <v-text-field solo style="color: #fff !important;" :label="configuration.database + ' (' + configuration.server + ')'" :prepend-icon="'storage'" :append-icon="configuration.backupComplete ? 'storage' : 'loop'" :disabled="true"></v-text-field>
+                                            <v-flex xs12 v-for="(configuration, index) in configurations" :key="configuration.id" v-if="!configuration.IsComplete">
+                                                <v-text-field :loading="!configuration.IsComplete" :solo="configuration.IsComplete" style="color: #fff !important;" :label="'Backing up ' + configuration.database + ' (' + configuration.server + ')'" :prepend-icon="'storage'" :disabled="true"></v-text-field>
                                             </v-flex>
                                         </v-layout>
                                     </v-container>
@@ -51,7 +51,7 @@
                                             <template v-if="taskProgress != []">
                                                 {{ taskProgress.completedItems }} out of {{ taskProgress.totalItems }}
                                                 <v-progress-linear height="20" :value="progressPercentage"></v-progress-linear>
-                                                {{ progressPercentage }}
+                                                {{ progressPercentage }}%
                                             </template>
                                         </v-layout>
                                     </v-container>
@@ -73,14 +73,19 @@
                                 </v-card-title>
                                 <v-card-text>
                                     <v-container grid-list-md>
-                                        <v-layout wrap justify-center >
-                                            Hype!
+                                        <v-layout wrap justify-center>
+                                            <center>
+                                                <v-flex md12 class="headline">The operation completed successfully.</v-flex>
+                                                <v-flex md12>
+                                                    <v-btn class="primary mt-4" large v-on:click="close()">Proceed</v-btn>
+                                                </v-flex>
+                                            </center>
                                         </v-layout>
                                     </v-container>
                                 </v-card-text>
                             </v-card>
                             <v-layout row wrap justify-end>
-                                <v-btn class="success" v-on:click="">Close</v-btn>
+                                
                             </v-layout>
                         </v-flex>
                     </v-stepper-content>

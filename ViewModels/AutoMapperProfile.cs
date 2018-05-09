@@ -13,6 +13,7 @@ namespace DRM.ViewModels
         public AutoMapperProfile()
         {
             CreateMap<ApplicationEvaluationResult, ApplicationEvaluationResultViewModel>().ForMember(x => x.TotalRecords, o => o.Ignore());
+            CreateMap<Application, ApplicationViewModel>().ForMember(x => x.IsCompliant, o => o.Ignore());
         }
     }
 }

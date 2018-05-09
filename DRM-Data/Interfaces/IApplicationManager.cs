@@ -12,5 +12,6 @@ namespace DRM_Data.Interfaces
         Task<Application> GetApplicationByID(int id);
         Task<Tuple<bool, string>> CreateApplication(Application application);
         Task<Tuple<bool, string>> UpdateApplication(Application application);
+        Task<bool> IsCompliant(int applicationID);
     }
 }

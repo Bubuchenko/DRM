@@ -15,6 +15,7 @@ namespace DRM.Controllers
 {
     public class RunningTask
     {
+        public string ApplicationName { get; set; }
         public int ID { get; set; }
         public bool IsCancelled { get; set; }
         public int totalItems { get; set; }
@@ -112,7 +113,7 @@ namespace DRM.Controllers
             var result = Mapper.Map<List<ApplicationEvaluationResultViewModel>>(await _context.GetAllNonCompliantRecords());
 
             //Count all the records for quick overview 
-            result.ForEach(f => f.TotalRecords = f.NonCompliantRecordSets.Select(i => i.Records.Count).Sum());
+                result.ForEach(f => f.TotalRecords = f.NonCompliantRecordSets.Select(i => i.Records.Count).Sum());
 
             return Ok(result);
         }
@@ -140,6 +141,7 @@ namespace DRM.Controllers
         {
             RunningTask task = new RunningTask()
             {
+                ApplicationName = transformParams.ApplicationName,
                 ID = transformParams.ID,
                 FailedItems = new Dictionary<int, string>(),
                 totalItems = transformParams.RecordIDs.Count

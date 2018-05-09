@@ -10,6 +10,7 @@ namespace DRM.Controllers
     {
         public IActionResult Index()
         {
+
             return View();
         }
     }

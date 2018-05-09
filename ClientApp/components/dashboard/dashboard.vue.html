@@ -18,15 +18,41 @@
             </v-card>
         </v-flex>
 
-        <v-flex md6 lg3 xs12 v-for="Application in Applications" :key="Application.id">
+        <v-flex md3 lg3 xs12 v-for="Application in Applications" :key="Application.id">
             <v-fade-transition mode="out-in">
                 <v-card class="appcard" height="100%" raised hover>
                     <v-card-title primary-title>
                         <div class="display-1">
                             {{ Application.name }}
-                            <v-divider class="mt-2"></v-divider>
                         </div>
+                        <v-divider class="mt-2"></v-divider>
                     </v-card-title>
+                    <v-list>
+                        <v-divider></v-divider>
+                        <v-list-tile>
+                            <v-list-tile-content class="tiletitle">
+                                Compliant
+                            </v-list-tile-content>
+                            <v-list-tile-content class="align-end">
+                                <v-icon v-if="Application.isCompliant" medium class="align-end" color="green">check_circle</v-icon>
+                                <v-icon v-if="!Application.isCompliant" medium class="align-end" color="red">error</v-icon>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                        <v-divider></v-divider>
+                        <v-list-tile>
+                            <v-list-tile-content class="tiletitle">
+                                Tasks
+                            </v-list-tile-content>
+                            <v-list-tile-content class="align-end">
+                                <div class="align-end">{{ Application.tasks.length }}</div>
+                            </v-list-tile-content>
+                        </v-list-tile>
+                        <v-divider></v-divider>
+
+                    </v-list>
+                    <v-card-text class="tiletitle">
+                        Description
+                    </v-card-text>
                     <v-card-text class="appcard-text">
                         {{ Application.description }}
                     </v-card-text>
@@ -52,12 +78,16 @@
         display: flex;
         flex-direction: column;
         cursor: default;
+        min-height: 400px !important;
     }
 
     .appcard-text {
         display: flex;
         flex-grow: 1;
-        padding-top: 0px;
         font-weight: 100;
+    }
+    .tiletitle {
+        font-weight: bold !important;
+        width: 50% !important;
     }
 </style>

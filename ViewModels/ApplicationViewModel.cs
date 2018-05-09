@@ -9,6 +9,7 @@ namespace DRM.ViewModels
         public string ID { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
+        public bool IsCompliant { get; set; }
         public DateTime CreationDate { get; set; }
 
         public List<TaskViewModel> Tasks { get; set; }

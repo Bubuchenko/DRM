@@ -41,6 +41,8 @@
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
                                                         <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? "NULL" : formatCellValue(props.item.item2[column]) }}</td>
+                                                        <td class="error-icon" v-on:click="errorDialog = true, errorDialogText = props.item.item3" v-if="props.item.item3 != null" color="red"><v-icon color="yellow darken-2">error</v-icon> </td>
+                                                        <td v-if="props.item.item3 == null"></td>
                                                     </template>
                                                 </v-data-table>
 
@@ -51,6 +53,8 @@
                                                         <td v-for="column in generateColumns(set.records)" class="deletedValue">
                                                             <strike>{{ formatCellValue(props.item.item2[column]) }}</strike>
                                                         </td>
+                                                        <td class="error-icon" v-on:click="errorDialog = true, errorDialogText = props.item.item3" v-if="props.item.item3 != null" color="red"><v-icon color="yellow darken-2">error</v-icon> </td>
+                                                        <td v-if="props.item.item3 == null"></td>
                                                     </template>
                                                 </v-data-table>
 
@@ -59,6 +63,8 @@
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
                                                         <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? SHA256(props.item[column]) : formatCellValue(props.item.item2[column]) }}</td>
+                                                        <td class="error-icon" v-on:click="errorDialog = true, errorDialogText = props.item.item3" v-if="props.item.item3 != null" color="red"><v-icon color="yellow darken-2">error</v-icon> </td>
+                                                        <td v-if="props.item.item3 == null"></td>
                                                     </template>
                                                 </v-data-table>
 
@@ -67,6 +73,8 @@
                                                     <v-progress-linear slot="progress" color="blue" indeterminate></v-progress-linear>
                                                     <template slot="items" slot-scope="props">
                                                         <td v-for="column in generateColumns(set.records)" :class="{ 'blurOut' : (column != set.task.columnName), 'changedValue' : (column == set.task.columnName)}">{{ column == set.task.columnName ? MD5(props.item[column]) : formatCellValue(props.item.item2[column]) }}</td>
+                                                        <td class="error-icon" v-on:click="errorDialog = true, errorDialogText = props.item.item3" v-if="props.item.item3 != null" color="red"><v-icon color="yellow darken-2">error</v-icon> </td>
+                                                        <td v-if="props.item.item3 == null"></td>
                                                     </template>
                                                 </v-data-table>
                                             </template>
@@ -107,11 +115,26 @@
                 <v-card-actions>
                     <v-spacer></v-spacer>
                     <v-btn class="success" @click.native="ExecutionDialog = false, userHasAgreed = false">Cancel</v-btn>
-                    <v-btn class="error" :disabled="!userHasAgreed" raised @click.native="executeActions()">Confirm</v-btn>
+                    <v-btn class="error" :disabled="!userHasAgreed" raised @click.native="executeActions(), ExecutionDialog = false, userHasAgreed = false">Confirm</v-btn>
                 </v-card-actions>
             </v-card>
         </v-dialog>
-        <executer-component :configurations="ConfigurationsParams" :params="TaskExecuterParams" v-model="ShowTaskExecuter" />
+
+        <v-dialog v-model="errorDialog" max-width="1000px">
+            <v-card>
+                <v-card-title>
+                    <span class="headline">Transforming this record returned the following error</span>
+                </v-card-title>
+                <v-card-text>
+                    <kbd class="errortext pd-5">{{ errorDialogText }}</kbd>
+                </v-card-text>
+                <v-card-actions>
+                    <v-btn color="primary" flat @click.stop="errorDialog=false">Close</v-btn>
+                </v-card-actions>
+            </v-card>
+        </v-dialog>
+
+        <executer-component v-on:close="ShowTaskExecuter = false, GetRecords()" :configurations="ConfigurationsParams" :params="TaskExecuterParams" v-model="ShowTaskExecuter" />
     </v-layout>
 </template>
 
@@ -146,8 +169,18 @@
         background: #131218 !important;
     }
 
+    .errortext {
+        padding: 30px !important;
+        color: red !important;
+        border: 1px dotted #fff;
+        user-select: all !important;
+    }
+
     .display-2 {
         font-weight: bold;
         background-color: #212232 !important;
+    }
+    .error-icon {
+        cursor: pointer;
     }
 </style>

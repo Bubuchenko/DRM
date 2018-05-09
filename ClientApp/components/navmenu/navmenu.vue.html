@@ -12,13 +12,21 @@
                 </v-list-tile>
                 <v-list-tile :to="'/Orchestrator'">
                     <v-list-tile-action>
-                        <v-icon>storage</v-icon>
+                        <v-icon>traffic</v-icon>
                     </v-list-tile-action>
                     <v-list-tile-content>
                         <v-list-tile-title>Task orchestrator</v-list-tile-title>
                     </v-list-tile-content>
                 </v-list-tile>
-                <v-list-tile @click="">
+                <v-list-tile :to="'/Operations'">
+                    <v-list-tile-action>
+                        <v-icon>repeat</v-icon>
+                    </v-list-tile-action>
+                    <v-list-tile-content>
+                        <v-list-tile-title>Running tasks</v-list-tile-title>
+                    </v-list-tile-content>
+                </v-list-tile>
+                <v-list-tile :to="'/Settings'">
                     <v-list-tile-action>
                         <v-icon>settings</v-icon>
                     </v-list-tile-action>
